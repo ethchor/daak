@@ -35,6 +35,17 @@ case, it is missing this, and it is the bug most likely to survive review.
 file, not in a log line, not in a `DaakError.context` — errors get shipped to
 plugins and agents.
 
+## Branches
+
+`develop` is the integration branch and the default. `main` is stable and is
+only reached from `develop`, a `release/*` or a `hotfix/*`.
+
+Work on a short-lived `<type>/<slug>` branch — `feat/`, `fix/`, `refactor/`,
+`perf/`, `test/`, `docs/`, `chore/`, `spike/` — and merge into `develop` as soon
+as it is green. CI checks the name on every pull request. Do not batch unrelated
+work to make a bigger pull request; a branch that lives a week is a merge
+conflict being written in slow motion.
+
 ## Before you commit
 
     pnpm check      # lint, typecheck, test — same as CI

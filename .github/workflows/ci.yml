@@ -2,8 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [develop, main]
   pull_request:
+    branches: [develop, main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -41,6 +42,51 @@ jobs:
       - name: Test
         run: pnpm test
 
+  branch-name:
+    name: branch name
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Check the branch follows the convention
+        run: |
+          # See CONTRIBUTING.md. The point is not tidiness — a branch name that
+          # says what kind of change it carries is the cheapest signal a
+          # reviewer gets before opening the diff.
+          branch="${{ github.head_ref }}"
+          if [[ "$branch" =~ ^(feat|fix|refactor|perf|test|docs|chore|spike)/[a-z0-9][a-z0-9._-]*$ ]]; then
+            echo "ok: $branch"
+            exit 0
+          fi
+          if [[ "$branch" =~ ^(release|hotfix)/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "ok: $branch"
+            exit 0
+          fi
+          echo "::error::Branch '$branch' does not follow the convention."
+          echo "Expected <type>/<slug>, where type is one of:"
+          echo "  feat fix refactor perf test docs chore spike"
+          echo "or release/x.y.z or hotfix/x.y.z."
+          echo "Examples: feat/sync-intent-log, fix/mime-charset-fallback"
+          exit 1
+
+  promotion:
+    name: develop → main only
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    steps:
+      - name: Check where this is coming from
+        run: |
+          # main is the stable branch. Everything reaches it through develop, so
+          # a change cannot skip integration — except a hotfix, which by
+          # definition is the case where waiting is the greater risk.
+          head="${{ github.head_ref }}"
+          if [[ "$head" == "develop" || "$head" =~ ^(release|hotfix)/ ]]; then
+            echo "ok: $head -> main"
+            exit 0
+          fi
+          echo "::error::Only develop, release/* or hotfix/* may target main. Got '$head'."
+          echo "Open this against develop instead."
+          exit 1
+
   contracts-lock:
     name: contracts changed?
     runs-on: ubuntu-latest
@@ -77,3 +123,9 @@ jobs:
   # Interaction latency is measured in CI and a miss fails the build — the
   # numbers are in ARCHITECTURE.md. Not a stub job until the harness exists,
   # because a job that always passes teaches everyone to ignore it.
+  #
+  # TODO (day 30+): delivery. There is nothing to deploy yet — no published
+  # packages, no hosted anything, no desktop build. When there is, it hangs off
+  # a push to `main`: build the web bundle, build the Tauri shell, publish
+  # packages on a tag. Adding that workflow now would be a pipeline that ships
+  # nothing, which is worse than no pipeline.

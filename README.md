@@ -61,6 +61,14 @@ pnpm check      # lint + typecheck + test
 There is no build step for the libraries — internal packages resolve to their
 TypeScript source.
 
+## Branches
+
+`develop` is the default and the integration branch — everything lands there
+first. `main` is stable, and is only reached from `develop`, a `release/*` or a
+`hotfix/*`. Working branches are `<type>/<slug>`: `feat/sync-intent-log`,
+`fix/mime-charset-fallback`, `chore/bump-biome`. CI checks the name on every
+pull request. Details in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 ## Documents worth reading first
 
 | Document | What it covers |

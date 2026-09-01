@@ -37,6 +37,46 @@ scrubbed of anything identifying a private individual. See
 
 **Provider adapters.** The `MailProvider` interface is small on purpose.
 
+## Branches
+
+Two long-lived branches:
+
+| Branch | What it is |
+|---|---|
+| `develop` | The integration branch, and the default. Everything lands here first. |
+| `main` | Stable. Only ever reached from `develop`, a `release/*`, or a `hotfix/*`. |
+
+Everything else is short-lived and named `<type>/<slug>`:
+
+```
+feat/sync-intent-log        a new capability
+fix/mime-charset-fallback   a bug fix
+refactor/store-projectors   behaviour unchanged
+perf/list-virtualisation    faster, same behaviour
+test/threading-properties   tests only
+docs/architecture-invariants documentation only
+chore/bump-biome            tooling, dependencies, CI
+spike/opfs-at-500k          timeboxed investigation, never merged as-is
+release/0.1.0               release preparation, develop → main
+hotfix/0.1.1                urgent fix, branched from main
+```
+
+CI enforces this on every pull request. The point is not tidiness: the branch
+name is the cheapest signal a reviewer gets about what kind of change is coming
+before they open the diff.
+
+## Merging
+
+**Short-lived branches, merged as soon as they are green.** A branch that lives
+for a week is a merge conflict being written in slow motion, and with several
+lanes running in parallel it is also five other people's work going stale.
+
+Land on `develop` the moment `pnpm check` passes and the change stands on its
+own — do not batch unrelated work to make a bigger pull request.
+
+`main` moves when a meaningful chunk of `develop` is worth calling stable, not
+on a schedule.
+
 ## Pull requests
 
 - One package per PR where possible. It is what makes review tractable.
