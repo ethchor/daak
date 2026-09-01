@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Agents optimise for green CI, so what we care about is encoded here.
+  CI: true
+
+jobs:
+  check:
+    name: lint · typecheck · test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint and format
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+  contracts-lock:
+    name: contracts changed?
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Flag changes to the locked interface package
+        run: |
+          # Not a failure — a flag. `contracts` is the interface every other
+          # package is written against, and a change there ripples everywhere.
+          # It should be a deliberate decision with the owner in the loop, not
+          # something that slips through inside a feature PR.
+          base="origin/${{ github.base_ref }}"
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          changed=$(git diff --name-only "$base"...HEAD -- packages/contracts/src || true)
+          if [ -n "$changed" ]; then
+            {
+              echo "### This PR changes \`@daak/contracts\`"
+              echo
+              echo "Locked after week 0 — see CONTRIBUTING.md. Confirm this is a"
+              echo "deliberate interface change and not a workaround for a bug in"
+              echo "the package that raised it."
+              echo
+              echo '```'
+              echo "$changed"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  # TODO (week 3, lane D): performance budgets against the seeded 500k mailbox.
+  # Interaction latency is measured in CI and a miss fails the build — the
+  # numbers are in ARCHITECTURE.md. Not a stub job until the harness exists,
+  # because a job that always passes teaches everyone to ignore it.

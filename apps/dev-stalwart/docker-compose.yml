@@ -1,0 +1,32 @@
+# Development mail server for Daak.
+#
+#   docker compose up -d
+#
+# Stalwart speaks JMAP natively, which is what `@daak/adapter-jmap` is built
+# against. This is a DEVELOPMENT setup: it binds to localhost, uses a fixed
+# admin password from .env, and is not hardened for anything else.
+#
+# Status: unvalidated until week 2 lane D. If you get this working end to end
+# before then, update this file and docs/TECH_STACK.md D-08 with what you had
+# to change.
+
+services:
+  stalwart:
+    image: stalwartlabs/stalwart:latest
+    container_name: daak-dev-stalwart
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080" # HTTP: JMAP, admin UI, .well-known
+      - "127.0.0.1:1025:25" # SMTP
+      - "127.0.0.1:1143:143" # IMAP (for the later adapter)
+      - "127.0.0.1:1587:587" # submission
+    environment:
+      # Set in .env — see .env.example. Never commit a real one.
+      STALWART_ADMIN_SECRET: ${STALWART_ADMIN_SECRET:?set STALWART_ADMIN_SECRET in apps/dev-stalwart/.env}
+    volumes:
+      - ./data:/opt/stalwart
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
