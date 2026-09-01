@@ -1,0 +1,8 @@
+* text=auto eol=lf
+
+# Fixture messages are byte-exact regression inputs. Git must never touch a
+# byte of them — several exist precisely to test CRLF vs LF handling.
+*.eml -text -diff
+packages/fixtures/corpus/** -text
+
+pnpm-lock.yaml -diff linguist-generated=true

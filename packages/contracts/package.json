@@ -1,0 +1,16 @@
+{
+  "name": "@daak/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Interfaces, persisted schemas, and the error taxonomy every Daak package speaks.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/contracts"
+  },
+  "dependencies": {
+    "zod": "^4.1.13"
+  }
+}

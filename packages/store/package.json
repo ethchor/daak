@@ -1,0 +1,13 @@
+{
+  "name": "@daak/store",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "SQLite schema, migrations, and typed queries.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/store"
+  }
+}

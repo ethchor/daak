@@ -1,0 +1,13 @@
+{
+  "name": "@daak/adapter-jmap",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "JMAP provider (RFC 8620/8621).",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/adapter-jmap"
+  }
+}

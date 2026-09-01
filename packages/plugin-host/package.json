@@ -1,0 +1,13 @@
+{
+  "name": "@daak/plugin-host",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Extension loading and the capability sandbox.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/plugin-host"
+  }
+}

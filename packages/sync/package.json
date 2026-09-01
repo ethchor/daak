@@ -1,0 +1,13 @@
+{
+  "name": "@daak/sync",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sync engine: cursors, intent log, reconciliation.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/sync"
+  }
+}

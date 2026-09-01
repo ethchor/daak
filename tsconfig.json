@@ -1,0 +1,31 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@daak/contracts": ["packages/contracts/src/index.ts"],
+      "@daak/contracts/*": ["packages/contracts/src/*"],
+      "@daak/fixtures": ["packages/fixtures/src/index.ts"],
+      "@daak/fixtures/*": ["packages/fixtures/src/*"],
+      "@daak/mime": ["packages/mime/src/index.ts"],
+      "@daak/threading": ["packages/threading/src/index.ts"],
+      "@daak/store": ["packages/store/src/index.ts"],
+      "@daak/sync": ["packages/sync/src/index.ts"],
+      "@daak/adapter-mock": ["packages/adapter-mock/src/index.ts"],
+      "@daak/adapter-jmap": ["packages/adapter-jmap/src/index.ts"],
+      "@daak/search": ["packages/search/src/index.ts"],
+      "@daak/intelligence": ["packages/intelligence/src/index.ts"],
+      "@daak/ui-core": ["packages/ui-core/src/index.ts"],
+      "@daak/plugin-host": ["packages/plugin-host/src/index.ts"],
+      "@daak/web": ["packages/web/src/index.ts"]
+    }
+  },
+  "include": [
+    "packages/*/src/**/*",
+    "packages/*/test/**/*",
+    "packages/*/*.config.ts",
+    "*.config.ts"
+  ],
+  "exclude": ["**/node_modules", "**/dist"]
+}

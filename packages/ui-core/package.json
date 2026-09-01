@@ -1,0 +1,13 @@
+{
+  "name": "@daak/ui-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Headless view models, command registry, keymap.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/ui-core"
+  }
+}

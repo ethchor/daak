@@ -1,0 +1,13 @@
+{
+  "name": "@daak/mime",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "RFC 5322/2045 parse and build. Byte-preserving.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/mime"
+  }
+}

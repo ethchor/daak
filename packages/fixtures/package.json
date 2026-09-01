@@ -1,0 +1,17 @@
+{
+  "name": "@daak/fixtures",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Golden message corpus and expected parse output \u2014 the regression suite for the decade.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/fixtures"
+  },
+  "dependencies": {
+    "@daak/contracts": "workspace:*",
+    "zod": "^4.1.13"
+  }
+}

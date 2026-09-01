@@ -1,0 +1,13 @@
+{
+  "name": "@daak/search",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "FTS5 indexing and the query grammar.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. packages/search"
+  }
+}
