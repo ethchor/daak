@@ -10,5 +10,15 @@
   },
   "scripts": {
     "test": "vitest run --root ../.. packages/sync"
+  },
+  "dependencies": {
+    "@daak/contracts": "workspace:*",
+    "@daak/store": "workspace:*",
+    "@daak/mime": "workspace:*",
+    "@daak/threading": "workspace:*"
+  },
+  "devDependencies": {
+    "@daak/adapter-mock": "workspace:*",
+    "@daak/fixtures": "workspace:*"
   }
 }
