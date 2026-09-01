@@ -8,7 +8,8 @@ welcome — especially fixtures, adapters, and bug reports from real mailboxes.
 Requires Node ≥ 22.12 and pnpm 10.
 
     pnpm install
-    pnpm check          # lint + typecheck + test
+    pnpm check          # lint + typecheck + test — the inner loop
+    pnpm preflight      # everything CI runs — the gate before you push
 
 There is no build step for the libraries: internal packages resolve to their
 TypeScript source. Only the web app builds, via Vite.
@@ -82,7 +83,10 @@ on a schedule.
 - One package per PR where possible. It is what makes review tractable.
 - Tests with the change. For `sync`, `mime` and `store`, tests **before** the
   change.
-- `pnpm check` green.
+- `pnpm preflight` green, not just `pnpm check`. Preflight runs the workflow's
+  own steps plus a frozen lockfile install, and lints the parts of the workflow
+  that cannot be executed locally. It exists because the first CI run this repo
+  ever had failed on a workflow that had never been executed.
 - Explain why in the description. The diff already says what.
 
 ## Changing `@daak/contracts`

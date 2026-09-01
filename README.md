@@ -55,7 +55,8 @@ Requires Node ≥ 22.12 and pnpm 10.
 
 ```sh
 pnpm install
-pnpm check      # lint + typecheck + test
+pnpm check      # lint + typecheck + test — the inner loop
+pnpm preflight  # everything CI runs, including the workflow's own steps
 ```
 
 There is no build step for the libraries — internal packages resolve to their

@@ -46,13 +46,30 @@ as it is green. CI checks the name on every pull request. Do not batch unrelated
 work to make a bigger pull request; a branch that lives a week is a merge
 conflict being written in slow motion.
 
-## Before you commit
+## Before you push
 
-    pnpm check      # lint, typecheck, test — same as CI
+    pnpm preflight
 
-If you touched a package, run its tests directly too:
+**Run it. Every time.** It is not `pnpm check` with extra steps — it catches a
+class of failure that nothing else local will:
+
+- It executes the `run:` steps read out of `.github/workflows/ci.yml` itself, so
+  there is no second copy of the command list to drift from CI.
+- It runs `pnpm install --frozen-lockfile`, which is what CI does. A plain
+  `pnpm install` locally *fixes* a stale lockfile instead of failing on it, so
+  the problem only ever appears on the runner.
+- It lints the workflow's `uses:` steps, which cannot be executed locally. The
+  first CI run this repo ever had failed because the pnpm version was declared
+  both in `package.json#packageManager` and as an action input; preflight now
+  refuses that combination by name.
+
+`pnpm check` (lint, typecheck, test) is the faster inner loop while you work.
+`pnpm preflight` is the gate before the push. If you touched one package:
 
     pnpm --filter @daak/<package> test
+
+**A red CI run is fixed before anything else.** Not after the next change, not
+alongside it. A pipeline people expect to be red stops being a signal.
 
 ## Style
 

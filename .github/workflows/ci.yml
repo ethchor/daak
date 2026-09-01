@@ -22,9 +22,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # No `version:` here on purpose. `packageManager` in package.json is the
+      # single source of truth for the pnpm version — Corepack reads it too —
+      # and pnpm/action-setup refuses to start when both are set.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/setup-node@v4
         with:
@@ -53,6 +54,12 @@ jobs:
           # says what kind of change it carries is the cheapest signal a
           # reviewer gets before opening the diff.
           branch="${{ github.head_ref }}"
+          # `develop` is a legitimate head: it is how a promotion into main is
+          # opened. Requiring <type>/<slug> there would block every release.
+          if [[ "$branch" == "develop" ]]; then
+            echo "ok: $branch (promotion into main)"
+            exit 0
+          fi
           if [[ "$branch" =~ ^(feat|fix|refactor|perf|test|docs|chore|spike)/[a-z0-9][a-z0-9._-]*$ ]]; then
             echo "ok: $branch"
             exit 0
