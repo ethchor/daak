@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Extension loading and the capability sandbox.",
+  "license": "AGPL-3.0-or-later",
   "exports": {
     ".": "./src/index.ts"
   },

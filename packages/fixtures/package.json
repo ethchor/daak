@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Golden message corpus and expected parse output \u2014 the regression suite for the decade.",
+  "license": "AGPL-3.0-or-later",
   "exports": {
     ".": "./src/index.ts"
   },

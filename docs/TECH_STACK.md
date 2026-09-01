@@ -14,6 +14,7 @@ expected to be revisited.
 
 | Layer | Choice |
 |---|---|
+| Licence | Apache-2.0 (`contracts`) · AGPL-3.0-or-later (everything else) |
 | Language | TypeScript 5.9, strict, ES2023 |
 | Runtime | Node 22 LTS; browser for the client |
 | Monorepo | pnpm workspaces |
@@ -355,24 +356,31 @@ loader), stable `fetch`, and modern `AbortSignal` behaviour. 22 is LTS through
 
 ---
 
-## Open — licensing
+## D-17 — Split licence: Apache-2.0 for the interfaces, AGPL-3.0 for the rest
 
-**Not decided. Needs the owner's call.**
+**Chosen:** `packages/contracts` is Apache-2.0. Everything else is
+AGPL-3.0-or-later. See `LICENSING.md`.
 
-The recommendation is a split: **Apache-2.0 for `@daak/contracts`** so anyone can
-implement a provider, plugin or integration against the interfaces without
-licence friction, and **AGPL-3.0-or-later for everything else** so a hosted fork
-must publish its changes.
+**Why:** the two halves want opposite things. The interfaces should be
+implementable by anyone — a provider, a plugin, an integration, an agent —
+without a legal conversation first, because an interface nobody can implement
+freely is not an open interface. The application should not be closeable by the
+first well-funded hosted fork, because "your mailbox should not depend on a
+company's permission to exist" is hollow if that is exactly what happens.
 
-That combination is what several self-hostable projects settled on, and it fits
-the positioning: open protocols, open source, your infrastructure — without
-handing a closed SaaS a free client.
+**Over:** uniform Apache-2.0 (friendliest to adoption and corporate
+contributors; no protection at all against a closed hosted fork); uniform AGPL
+(one rule, simpler to explain, but it puts friction in front of exactly the
+plugin and integration authors the extension model depends on).
 
-The alternative is a uniform MIT/Apache-2.0 repo: friendlier to embedding and to
-corporate contributors, no protection against a closed hosted fork.
+**The known cost:** some organisations ban AGPL dependencies outright. Those
+teams can still build against `@daak/contracts`, which is Apache-2.0 and is what
+they would be importing anyway — only the application itself is AGPL. That is
+the split doing its job.
 
-No `LICENSE` file is committed until this is decided, because the wrong one is
-much harder to walk back than a missing one.
+**Revisit if:** the AGPL turns out to be blocking contributions rather than
+hosted forks — the tell is contributors saying their employer will not let them
+near the repository, not users saying they prefer MIT.
 
 ---
 

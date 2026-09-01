@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "React shell over ui-core.",
+  "license": "AGPL-3.0-or-later",
   "exports": {
     ".": "./src/index.ts"
   },

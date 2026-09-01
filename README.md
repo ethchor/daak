@@ -89,6 +89,8 @@ require our AI.
 
 ## Licence
 
-Not yet settled — see the open decision in [`docs/TECH_STACK.md`](docs/TECH_STACK.md).
-The project will be released under an OSI-approved licence, with the interface
-package under a permissive one.
+Split, deliberately: [`packages/contracts`](packages/contracts) is
+**Apache-2.0**, so anyone can implement a provider, plugin or integration
+against the interfaces freely. Everything else is **AGPL-3.0-or-later**, so a
+hosted fork publishes its changes. Full explanation in
+[`LICENSING.md`](LICENSING.md).

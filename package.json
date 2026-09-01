@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Open, local-first, programmable email client for humans and agents.",
+  "license": "AGPL-3.0-or-later",
   "type": "module",
   "packageManager": "pnpm@10.33.0",
   "engines": {

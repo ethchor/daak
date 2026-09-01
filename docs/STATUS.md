@@ -14,7 +14,7 @@ _Last updated: 2026-09-01._
 | `@daak/fixtures` — golden corpus + loader | 🟡 22 of a target 300+ messages |
 | `ARCHITECTURE.md` — the invariants | ✅ Done |
 | CI from commit one | 🟡 lint/typecheck/test green; performance budgets land in week 3 |
-| Tech stack decided | ✅ Done, except the licence |
+| Tech stack decided | ✅ Done, reviewed with the owner. Licence settled (D-17) |
 
 ### What is genuinely finished
 
@@ -64,7 +64,7 @@ property tests will be written against.
 
 | Decision | Blocking | Owner |
 |---|---|---|
-| Licence (Apache-2.0 for contracts + AGPL-3.0 for the rest, vs uniform permissive) | Nothing yet; blocks going public | Owner |
+| Does OPFS SQLite hold up at 500k messages across browsers? | Week 1 `store` lane | Spike it before the schema is built on the assumption |
 | MIME library choice (`postal-mime` vs alternatives) | Week 1 lane A | Decide by evaluating against the corpus |
 
 ## Known gaps worth naming

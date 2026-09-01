@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "LLMProvider interface, annotators, BYOK key handling.",
+  "license": "AGPL-3.0-or-later",
   "exports": {
     ".": "./src/index.ts"
   },

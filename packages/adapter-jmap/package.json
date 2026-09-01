@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "JMAP provider (RFC 8620/8621).",
+  "license": "AGPL-3.0-or-later",
   "exports": {
     ".": "./src/index.ts"
   },

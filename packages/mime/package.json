@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "RFC 5322/2045 parse and build. Byte-preserving.",
+  "license": "AGPL-3.0-or-later",
   "exports": {
     ".": "./src/index.ts"
   },

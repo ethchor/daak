@@ -73,7 +73,11 @@ two years out — which is exactly why they need defending now.
 
 ## Licence
 
-**Not yet settled.** See the open decision in `docs/TECH_STACK.md`. Until a
-`LICENSE` file lands, contributions are accepted on the understanding that the
-project will be released under an OSI-approved licence, with the interface
-package under a permissive one.
+Daak is split-licensed: `packages/contracts` is Apache-2.0, everything else is
+AGPL-3.0-or-later. See `LICENSING.md` for what that means in practice — the
+short version is that you can build against the interfaces under any licence you
+like, and a hosted fork of the application publishes its changes.
+
+Contributions are accepted under the licence of the directory they land in.
+There is no CLA and no copyright assignment; you keep copyright in your own
+work.

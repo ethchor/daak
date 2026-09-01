@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Deterministic in-memory MailProvider plus fault injection.",
+  "license": "AGPL-3.0-or-later",
   "exports": {
     ".": "./src/index.ts"
   },

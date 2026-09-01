@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Interfaces, persisted schemas, and the error taxonomy every Daak package speaks.",
+  "license": "Apache-2.0",
   "exports": {
     ".": "./src/index.ts"
   },
