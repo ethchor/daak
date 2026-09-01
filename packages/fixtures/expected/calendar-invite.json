@@ -1,0 +1,36 @@
+{
+  "description": "iTIP meeting request as text/calendar inside multipart/alternative.",
+  "categories": [
+    "calendar",
+    "multipart"
+  ],
+  "headers": {
+    "subject": "Invitation: Architecture sync",
+    "from": [
+      {
+        "name": "Asha Menon",
+        "address": "asha@example.org"
+      }
+    ],
+    "messageId": [
+      "invite-9912@example.org"
+    ],
+    "date": "2026-08-12T09:00:00.000Z"
+  },
+  "structure": [
+    "multipart/alternative",
+    "text/plain",
+    "text/calendar"
+  ],
+  "text": {
+    "contains": [
+      "Architecture sync"
+    ]
+  },
+  "attachments": [],
+  "hasAttachment": false,
+  "notes": "The calendar part carries method=REQUEST as a Content-Type parameter; a future calendar integration keys off it.",
+  "id": "calendar-invite",
+  "source": "synthetic",
+  "size": 867
+}

@@ -1,0 +1,34 @@
+{
+  "description": "An attachment with no filename anywhere. The UI needs a stable synthesised name rather than a blank row.",
+  "categories": [
+    "attachment",
+    "edge-case"
+  ],
+  "headers": {
+    "subject": "Scan",
+    "from": [
+      {
+        "name": "",
+        "address": "scanner@example.org"
+      }
+    ],
+    "messageId": [
+      "nofilename-01@example.org"
+    ],
+    "date": "2026-08-19T10:10:00.000Z"
+  },
+  "structure": [
+    "multipart/mixed",
+    "text/plain",
+    "application/octet-stream"
+  ],
+  "attachments": [
+    {
+      "contentType": "application/octet-stream"
+    }
+  ],
+  "hasAttachment": true,
+  "id": "attachment-no-filename",
+  "source": "synthetic",
+  "size": 432
+}

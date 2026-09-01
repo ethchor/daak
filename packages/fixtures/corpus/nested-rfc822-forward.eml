@@ -1,0 +1,27 @@
+Message-ID: <fwd-outer@example.org>
+Date: Sat, 15 Aug 2026 12:00:00 +0000
+From: Ravi <ravi@example.org>
+To: you@example.net
+Subject: Fwd: Quarterly numbers
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="fwd_b_55"
+
+--fwd_b_55
+Content-Type: text/plain; charset=us-ascii
+
+Forwarding for visibility.
+
+--fwd_b_55
+Content-Type: message/rfc822
+Content-Disposition: attachment
+
+Message-ID: <inner-orig@example.org>
+Date: Mon, 3 Aug 2026 09:14:22 +0000
+From: Asha Menon <asha@example.org>
+To: Ravi <ravi@example.org>
+Subject: Quarterly numbers
+Content-Type: text/plain; charset=us-ascii
+
+The quarterly numbers are in.
+
+--fwd_b_55--

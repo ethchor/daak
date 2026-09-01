@@ -1,0 +1,21 @@
+Message-ID: <nofilename-01@example.org>
+Date: Wed, 19 Aug 2026 10:10:00 +0000
+From: scanner@example.org
+To: you@example.net
+Subject: Scan
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="nf_66"
+
+--nf_66
+Content-Type: text/plain; charset=us-ascii
+
+Scan attached.
+
+--nf_66
+Content-Type: application/octet-stream
+Content-Disposition: attachment
+Content-Transfer-Encoding: base64
+
+QUJDREVGRw==
+
+--nf_66--

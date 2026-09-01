@@ -1,0 +1,9 @@
+Message-ID: <baddate-01@example.com>
+Date: Fri, 32 Aug 2026 25:99:00 +9900
+From: broken@example.com
+To: you@example.net
+Subject: Impossible date
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+
+The Date header on this message is nonsense.

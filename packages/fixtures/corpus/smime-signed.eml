@@ -1,0 +1,21 @@
+Message-ID: <smime-01@example.gov>
+Date: Thu, 13 Aug 2026 15:45:00 +0000
+From: Records <records@example.gov>
+To: you@example.net
+Subject: Signed notice
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="sig_bound_44"
+
+--sig_bound_44
+Content-Type: text/plain; charset=us-ascii
+
+This notice is digitally signed.
+
+--sig_bound_44
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIIBCmZha2UgcGtjczcgc2lnbmF0dXJlIGJ5dGVzIGZvciBmaXh0dXJlIHB1cnBvc2VzZmFrZSBwa2NzNyBzaWduYXR1cmUgYnl0ZXMgZm9yIGZpeHR1cmUgcHVycG9zZXNmYWtlIHBrY3M3IHNpZ25hdHVyZSBieXRlcyBmb3IgZml4dHVyZSBwdXJwb3Nlcw==
+
+--sig_bound_44--

@@ -1,0 +1,33 @@
+Message-ID: <invite-9912@example.org>
+Date: Wed, 12 Aug 2026 09:00:00 +0000
+From: Asha Menon <asha@example.org>
+To: you@example.net
+Subject: Invitation: Architecture sync
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="cal_bound_31"
+
+--cal_bound_31
+Content-Type: text/plain; charset=utf-8
+
+You are invited to Architecture sync on 14 Aug at 14:00 UTC.
+
+--cal_bound_31
+Content-Type: text/calendar; charset=utf-8; method=REQUEST
+Content-Transfer-Encoding: 7bit
+
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Example Corp//Scheduler//EN
+METHOD:REQUEST
+BEGIN:VEVENT
+UID:evt-9912@example.org
+DTSTAMP:20260812T090000Z
+DTSTART:20260814T140000Z
+DTEND:20260814T150000Z
+SUMMARY:Architecture sync
+ORGANIZER;CN=Asha Menon:mailto:asha@example.org
+ATTENDEE;CN=You;RSVP=TRUE:mailto:you@example.net
+END:VEVENT
+END:VCALENDAR
+
+--cal_bound_31--

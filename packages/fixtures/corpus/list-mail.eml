@@ -1,0 +1,14 @@
+Message-ID: <list-4412@lists.example.org>
+Date: Tue, 18 Aug 2026 13:00:00 +0000
+From: Kavya <kavya@example.org>
+Sender: devs-bounces@lists.example.org
+To: devs@lists.example.org
+Subject: [devs] Proposal: drop the legacy encoder
+List-Id: Developer discussion <devs.lists.example.org>
+List-Unsubscribe: <mailto:devs-unsubscribe@lists.example.org>, <https://lists.example.org/u/4412>
+List-Post: <mailto:devs@lists.example.org>
+Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+The legacy encoder has no callers left. Proposing removal in the next release.

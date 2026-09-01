@@ -1,0 +1,22 @@
+Message-ID: <newsletter-88@example.org>
+Date: Thu, 6 Aug 2026 08:00:00 +0000
+From: The Weekly <hello@weekly.example>
+To: you@example.net
+Subject: Issue 88
+MIME-Version: 1.0
+Content-Type: multipart/related; type="text/html"; boundary="rel_772"
+
+--rel_772
+Content-Type: text/html; charset=utf-8
+
+<html><body><h1>Issue 88</h1><img src="cid:logo.772@weekly.example" alt="logo"></body></html>
+
+--rel_772
+Content-Type: image/png; name="logo.png"
+Content-ID: <logo.772@weekly.example>
+Content-Disposition: inline; filename="logo.png"
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==
+
+--rel_772--

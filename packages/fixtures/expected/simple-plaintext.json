@@ -1,0 +1,38 @@
+{
+  "description": "The boring baseline: 7bit us-ascii text/plain. If this ever fails, stop everything.",
+  "categories": [
+    "baseline"
+  ],
+  "headers": {
+    "subject": "Quarterly numbers",
+    "from": [
+      {
+        "name": "Asha Menon",
+        "address": "asha@example.org"
+      }
+    ],
+    "to": [
+      {
+        "name": "You",
+        "address": "you@example.net"
+      }
+    ],
+    "messageId": [
+      "20260803091422.1a2b3c@example.org"
+    ],
+    "date": "2026-08-03T09:14:22.000Z"
+  },
+  "structure": [
+    "text/plain"
+  ],
+  "text": {
+    "contains": [
+      "The quarterly numbers are in."
+    ]
+  },
+  "attachments": [],
+  "hasAttachment": false,
+  "id": "simple-plaintext",
+  "source": "synthetic",
+  "size": 511
+}

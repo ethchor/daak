@@ -1,0 +1,9 @@
+Message-ID: <20260803091422.1a2b3c@example.org>
+Date: Mon, 17 Aug 2026 08:00:00 +0000
+From: Someone Else <else@example.com>
+To: you@example.net
+Subject: Unrelated mail that reuses a Message-ID
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+
+Broken sender software reuses ids. This is not the same message.

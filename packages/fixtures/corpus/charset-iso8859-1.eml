@@ -1,0 +1,12 @@
+Message-ID: <latin1-01@example.fr>
+Date: Sat, 8 Aug 2026 09:30:00 +0200
+From: francois@example.fr
+To: you@example.net
+Subject: =?ISO-8859-1?Q?R=E9sum=E9?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Voil=E0 le r=E9sum=E9 de la r=E9union.
+Cordialement,
+Fran=E7ois

@@ -1,0 +1,37 @@
+{
+  "description": "multipart/signed. The signature part must not be shown to the user as an attachment.",
+  "categories": [
+    "smime",
+    "multipart",
+    "attachment"
+  ],
+  "headers": {
+    "subject": "Signed notice",
+    "from": [
+      {
+        "name": "Records",
+        "address": "records@example.gov"
+      }
+    ],
+    "messageId": [
+      "smime-01@example.gov"
+    ],
+    "date": "2026-08-13T15:45:00.000Z"
+  },
+  "structure": [
+    "multipart/signed",
+    "text/plain",
+    "application/pkcs7-signature"
+  ],
+  "text": {
+    "contains": [
+      "digitally signed"
+    ]
+  },
+  "attachments": [],
+  "hasAttachment": false,
+  "notes": "Signature bytes are not a real PKCS#7 structure. This fixture tests MIME structure handling, not verification.",
+  "id": "smime-signed",
+  "source": "synthetic",
+  "size": 776
+}

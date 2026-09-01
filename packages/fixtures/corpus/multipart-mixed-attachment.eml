@@ -1,0 +1,21 @@
+Message-ID: <invoice-2026-08@example.org>
+Date: Wed, 5 Aug 2026 16:40:11 -0700
+From: Billing <billing@vendor.example>
+To: accounts@example.net
+Subject: Invoice 4471
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="----=_Part_88_1739"
+
+------=_Part_88_1739
+Content-Type: text/plain; charset=utf-8
+
+Invoice attached. Net 30.
+
+------=_Part_88_1739
+Content-Type: application/pdf; name="invoice-4471.pdf"
+Content-Disposition: attachment; filename="invoice-4471.pdf"
+Content-Transfer-Encoding: base64
+
+JVBERi0xLjQKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZz4+ZW5kb2JqCnRyYWlsZXI8PC9Sb290IDEgMCBSPj4KJSVFT0YK
+
+------=_Part_88_1739--

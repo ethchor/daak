@@ -1,0 +1,41 @@
+{
+  "description": "A whole message attached as message/rfc822. Nested parsing must not confuse the inner headers with the outer ones.",
+  "categories": [
+    "multipart",
+    "nested",
+    "attachment"
+  ],
+  "headers": {
+    "subject": "Fwd: Quarterly numbers",
+    "from": [
+      {
+        "name": "Ravi",
+        "address": "ravi@example.org"
+      }
+    ],
+    "messageId": [
+      "fwd-outer@example.org"
+    ],
+    "date": "2026-08-15T12:00:00.000Z"
+  },
+  "structure": [
+    "multipart/mixed",
+    "text/plain",
+    "message/rfc822"
+  ],
+  "text": {
+    "contains": [
+      "Forwarding for visibility."
+    ]
+  },
+  "attachments": [
+    {
+      "contentType": "message/rfc822"
+    }
+  ],
+  "hasAttachment": true,
+  "notes": "The outer Message-ID is fwd-outer@example.org. Indexing the inner one as the message's own id corrupts threading.",
+  "id": "nested-rfc822-forward",
+  "source": "synthetic",
+  "size": 662
+}

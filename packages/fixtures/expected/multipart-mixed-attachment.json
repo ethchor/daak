@@ -1,0 +1,41 @@
+{
+  "description": "Standard base64 attachment with a filename in both Content-Type and Content-Disposition.",
+  "categories": [
+    "multipart",
+    "attachment",
+    "base64"
+  ],
+  "headers": {
+    "subject": "Invoice 4471",
+    "from": [
+      {
+        "name": "Billing",
+        "address": "billing@vendor.example"
+      }
+    ],
+    "messageId": [
+      "invoice-2026-08@example.org"
+    ],
+    "date": "2026-08-05T23:40:11.000Z"
+  },
+  "structure": [
+    "multipart/mixed",
+    "text/plain",
+    "application/pdf"
+  ],
+  "text": {
+    "contains": [
+      "Net 30."
+    ]
+  },
+  "attachments": [
+    {
+      "filename": "invoice-4471.pdf",
+      "contentType": "application/pdf"
+    }
+  ],
+  "hasAttachment": true,
+  "id": "multipart-mixed-attachment",
+  "source": "synthetic",
+  "size": 644
+}

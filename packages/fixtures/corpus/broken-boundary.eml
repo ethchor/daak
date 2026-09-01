@@ -1,0 +1,18 @@
+Message-ID: <broken-01@example.org>
+Date: Tue, 11 Aug 2026 07:05:00 +0000
+From: legacy@example.com
+To: you@example.net
+Subject: Fwd: scanned document
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0007_01C2A0"
+
+------=_NextPart_000_0007_01C2A0
+Content-Type: text/plain; charset=us-ascii
+
+Please see attached.
+
+------=_NextPart_000_0007_01C2A0
+Content-Type: text/plain; name="note.txt"
+Content-Disposition: attachment; filename="note.txt"
+
+Scanned on the old machine.

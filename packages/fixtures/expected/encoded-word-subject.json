@@ -1,0 +1,41 @@
+{
+  "description": "RFC 2047 encoded words: Q-encoded ISO-8859-1 display name, B-encoded UTF-8 subject and recipient name.",
+  "categories": [
+    "rfc2047",
+    "charset",
+    "headers"
+  ],
+  "headers": {
+    "subject": "Réunion: déjeuner à midi",
+    "from": [
+      {
+        "name": "François Müller",
+        "address": "francois@example.fr"
+      }
+    ],
+    "to": [
+      {
+        "name": "अनंत",
+        "address": "anant@example.in"
+      }
+    ],
+    "messageId": [
+      "ew-2047@example.org"
+    ],
+    "date": "2026-08-07T12:00:00.000Z"
+  },
+  "structure": [
+    "text/plain"
+  ],
+  "text": {
+    "contains": [
+      "Body is plain."
+    ]
+  },
+  "attachments": [],
+  "hasAttachment": false,
+  "notes": "The underscore in a Q-encoded word is a space, not an underscore.",
+  "id": "encoded-word-subject",
+  "source": "synthetic",
+  "size": 329
+}

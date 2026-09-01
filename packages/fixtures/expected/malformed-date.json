@@ -1,0 +1,29 @@
+{
+  "description": "An unparseable Date header. sentAt must be absent; receivedAt (from the server) carries the ordering.",
+  "categories": [
+    "malformed",
+    "dates"
+  ],
+  "headers": {
+    "subject": "Impossible date",
+    "from": [
+      {
+        "name": "",
+        "address": "broken@example.com"
+      }
+    ],
+    "messageId": [
+      "baddate-01@example.com"
+    ],
+    "date": null
+  },
+  "structure": [
+    "text/plain"
+  ],
+  "attachments": [],
+  "hasAttachment": false,
+  "notes": "Never throw on a bad date, and never substitute 'now' — that silently reorders someone's mailbox.",
+  "id": "malformed-date",
+  "source": "synthetic",
+  "size": 261
+}

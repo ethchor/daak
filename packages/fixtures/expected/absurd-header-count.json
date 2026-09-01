@@ -1,0 +1,35 @@
+{
+  "description": "400+ headers plus a 60-address folded header. Parsing must stay linear and the folded header must unfold correctly.",
+  "categories": [
+    "headers",
+    "performance",
+    "folding"
+  ],
+  "headers": {
+    "subject": "Passed through eleven relays",
+    "from": [
+      {
+        "name": "",
+        "address": "relay@example.net"
+      }
+    ],
+    "messageId": [
+      "headers-of-doom@example.net"
+    ],
+    "date": "2026-08-14T06:00:00.000Z"
+  },
+  "structure": [
+    "text/plain"
+  ],
+  "text": {
+    "contains": [
+      "Survived."
+    ]
+  },
+  "attachments": [],
+  "hasAttachment": false,
+  "headerCountAtLeast": 400,
+  "id": "absurd-header-count",
+  "source": "synthetic",
+  "size": 16567
+}

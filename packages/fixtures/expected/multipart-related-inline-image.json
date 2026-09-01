@@ -1,0 +1,44 @@
+{
+  "description": "Inline image referenced by cid:. Must NOT count as a user-visible attachment.",
+  "categories": [
+    "multipart",
+    "inline-image",
+    "content-id"
+  ],
+  "headers": {
+    "subject": "Issue 88",
+    "from": [
+      {
+        "name": "The Weekly",
+        "address": "hello@weekly.example"
+      }
+    ],
+    "messageId": [
+      "newsletter-88@example.org"
+    ],
+    "date": "2026-08-06T08:00:00.000Z"
+  },
+  "structure": [
+    "multipart/related",
+    "text/html",
+    "image/png"
+  ],
+  "html": {
+    "contains": [
+      "cid:logo.772@weekly.example"
+    ]
+  },
+  "attachments": [],
+  "inlineParts": [
+    {
+      "contentId": "logo.772@weekly.example",
+      "contentType": "image/png",
+      "filename": "logo.png"
+    }
+  ],
+  "hasAttachment": false,
+  "notes": "hasAttachment is false: Content-Disposition is inline and the part is referenced by cid. Getting this wrong puts a paperclip on every newsletter.",
+  "id": "multipart-related-inline-image",
+  "source": "synthetic",
+  "size": 690
+}

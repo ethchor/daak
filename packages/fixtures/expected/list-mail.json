@@ -1,0 +1,30 @@
+{
+  "description": "Mailing-list mail with the full List-* header set. The cheapest reliable bulk signal a triage annotator has.",
+  "categories": [
+    "list-mail",
+    "headers"
+  ],
+  "headers": {
+    "subject": "[devs] Proposal: drop the legacy encoder",
+    "from": [
+      {
+        "name": "Kavya",
+        "address": "kavya@example.org"
+      }
+    ],
+    "messageId": [
+      "list-4412@lists.example.org"
+    ],
+    "listId": "devs.lists.example.org",
+    "date": "2026-08-18T13:00:00.000Z"
+  },
+  "structure": [
+    "text/plain"
+  ],
+  "attachments": [],
+  "hasAttachment": false,
+  "notes": "List-Id must be extracted from inside the angle brackets, not stored as the whole header value.",
+  "id": "list-mail",
+  "source": "synthetic",
+  "size": 593
+}

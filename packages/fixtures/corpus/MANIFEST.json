@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "description": "Golden corpus for Daak. Inputs are byte-exact and must never be reformatted.",
+  "fixtures": [
+    "absurd-header-count",
+    "attachment-no-filename",
+    "bare-lf-endings",
+    "broken-boundary",
+    "calendar-invite",
+    "charset-iso8859-1",
+    "charset-shift-jis",
+    "duplicate-message-id",
+    "eight-bit-body",
+    "empty-body",
+    "encoded-word-subject",
+    "group-recipients",
+    "list-mail",
+    "malformed-date",
+    "multipart-alternative",
+    "multipart-mixed-attachment",
+    "multipart-related-inline-image",
+    "nested-rfc822-forward",
+    "no-references-reply",
+    "simple-plaintext",
+    "smime-signed",
+    "subject-only-thread"
+  ]
+}
