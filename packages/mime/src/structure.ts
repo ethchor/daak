@@ -101,7 +101,7 @@ export const scanStructure = (bytes: Uint8Array, maxDepth = DEFAULT_MAX_DEPTH): 
       return { contentType, parameters, children: [] };
     }
 
-    const boundary = parameters["boundary"];
+    const boundary = parameters.boundary;
     if (boundary === undefined || boundary === "") {
       // multipart with no boundary: there is no way to find the parts. Report
       // it rather than guessing, and treat the body as opaque.

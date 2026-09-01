@@ -70,7 +70,21 @@ importers:
 
   packages/search: {}
 
-  packages/store: {}
+  packages/store:
+    dependencies:
+      '@daak/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+    devDependencies:
+      '@daak/fixtures':
+        specifier: workspace:*
+        version: link:../fixtures
+      '@daak/mime':
+        specifier: workspace:*
+        version: link:../mime
+      '@daak/threading':
+        specifier: workspace:*
+        version: link:../threading
 
   packages/sync: {}
 

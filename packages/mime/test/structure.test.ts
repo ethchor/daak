@@ -21,7 +21,7 @@ describe("content-type parsing", () => {
   it("survives a quoted boundary containing a semicolon", () => {
     // Rare and legal, and it defeats a naive split(';').
     const result = parseContentType('multipart/mixed; boundary="a;b;c"');
-    expect(result.parameters["boundary"]).toBe("a;b;c");
+    expect(result.parameters.boundary).toBe("a;b;c");
   });
 });
 

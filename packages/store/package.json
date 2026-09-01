@@ -10,5 +10,13 @@
   },
   "scripts": {
     "test": "vitest run --root ../.. packages/store"
+  },
+  "dependencies": {
+    "@daak/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@daak/fixtures": "workspace:*",
+    "@daak/mime": "workspace:*",
+    "@daak/threading": "workspace:*"
   }
 }

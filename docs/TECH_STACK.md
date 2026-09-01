@@ -22,7 +22,7 @@ expected to be revisited.
 | Tests | Vitest + fast-check |
 | Lint/format | Biome |
 | Validation | Zod 4 |
-| Storage | SQLite — `better-sqlite3` (Node), `sqlite-wasm` + OPFS (browser) |
+| Storage | SQLite — `node:sqlite` (Node), `sqlite-wasm` + OPFS (browser) |
 | Search | SQLite FTS5 |
 | Protocol | JMAP (RFC 8620/8621), hand-rolled client |
 | Dev server | Stalwart via Docker Compose |
@@ -165,9 +165,22 @@ a near-drop-in for the subset we use.
 
 ## D-06 — SQLite, two drivers, no ORM
 
-**Chosen:** SQLite with FTS5. `better-sqlite3` on Node, `@sqlite.org/sqlite-wasm`
-over OPFS in the browser, behind one driver interface in `@daak/store`.
-Hand-written SQL and numbered migrations.
+**Chosen:** SQLite with FTS5, behind one driver interface in `@daak/store`.
+**`node:sqlite` on Node**, `@sqlite.org/sqlite-wasm` over OPFS in the browser.
+Hand-written SQL and numbered migrations keyed on `pragma user_version`.
+
+**Why `node:sqlite` rather than `better-sqlite3`,** which this decision
+originally named: it is built into Node 22, which is already the floor (D-14),
+so it costs no dependency and — more importantly — no native build step.
+Contributors run `pnpm install` and it works; CI needs no toolchain. Tested
+before adopting: SQLite 3.51.2 with FTS5, recursive CTEs and JSON1, which is the
+entire feature list the store needs. It is synchronous, which fits "single
+writer per account" exactly.
+
+The caveat, stated honestly: `node:sqlite` is still marked experimental in Node
+22 (stable in 24), and prints a warning on every run. The surface used is small,
+and `better-sqlite3` remains a drop-in behind the same driver interface — which
+is what the interface is for.
 
 **Why:** the same schema and the same queries run on the server and in the
 browser, so `store` is written once. FTS5 is in both builds, so search does not
@@ -179,7 +192,9 @@ ones an ORM makes harder to write and harder to read. The schema is small and
 the queries are the product.
 
 **Over:** Drizzle (good types, wrong layer for this); IndexedDB directly (no
-FTS, worse ergonomics); a server-only store (kills offline, which is the point).
+FTS, worse ergonomics); a server-only store (kills offline, which is the point);
+`better-sqlite3` (mature and widely used, but a native build for no feature we
+need).
 
 **The one real unknown, and how it gets closed:** whether OPFS SQLite holds up at
 500k messages across Chrome, Safari and Firefox. Nothing else in this stack is
