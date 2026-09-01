@@ -53,33 +53,38 @@ So the rule for the whole month is: **contracts first, then everything at once.*
 daak/
 ├── ARCHITECTURE.md          ← the constitution; agents read this first
 ├── BRAND.md                 ← voice, vocabulary, visual direction
-├── docs/
-│   ├── BUILD_PLAN.md        ← this file
-│   └── TECH_STACK.md        ← decisions, with what would make us revisit them
+├── docs/                    ← BUILD_PLAN, TECH_STACK, STATUS
 ├── brand/                   ← tokens.css, daak-mark.svg
-├── packages/
-│   ├── contracts/           ← types, zod schemas, error taxonomy. LOCKED after week 0.
-│   ├── fixtures/            ← golden message corpus + expected outputs
-│   ├── mime/                ← RFC 5322/2045 parse + build, byte-preserving
-│   ├── threading/           ← JWZ threading, deterministic
-│   ├── store/               ← SQLite schema, migrations, queries
-│   ├── sync/                ← engine: cursor, intent log, reconciliation
-│   ├── adapter-mock/        ← deterministic fake server + chaos injection
-│   ├── adapter-jmap/        ← JMAP provider
-│   ├── adapter-imap/        ← IMAP/SMTP provider (later)
-│   ├── search/              ← FTS5, query parser, NL→filter
-│   ├── intelligence/        ← LLMProvider iface, annotators, BYOK
-│   ├── ui-core/             ← headless view models, command registry, keymap
+├── crates/                  ← the Rust core
+│   ├── daak-contracts/      ← types, taxonomy, traits. SOURCE OF TRUTH. Locked after week 0
+│   ├── daak-mime/           ← RFC 5322/2045, byte-preserving
+│   ├── daak-threading/      ← JWZ threading, deterministic
+│   ├── daak-store/          ← SQLite schema, migrations, queries
+│   ├── daak-provider/       ← the MailProvider trait
+│   ├── daak-adapter-mock/   ← deterministic fake server + chaos injection
+│   ├── daak-adapter-jmap/   ← JMAP provider
+│   ├── daak-sync/           ← engine: cursor, intent log, reconciliation
+│   ├── daak-search/         ← FTS5, query grammar
+│   ├── daak-commands/       ← the command registry
+│   ├── daak-intelligence/   ← LLM traits, annotators, BYOK
+│   ├── daak-server/         ← daakd: RPC, rules runner, MCP
+│   └── daak-bindings/       ← generates the TypeScript contract
+├── packages/                ← the TypeScript client
+│   ├── contracts/           ← generated types + typed RPC client
+│   ├── fixtures/            ← golden corpus, shared by both languages
+│   ├── ui-core/             ← keymap, palette, view models
 │   ├── plugin-host/         ← extension loading, capability sandbox
-│   └── web/                 ← React shell
+│   └── web/                 ← React + Radix shell
 └── apps/
-    └── dev-stalwart/        ← docker-compose Stalwart + seeded mailboxes
+    ├── dev-stalwart/        ← docker-compose Stalwart + seeded mailboxes
+    └── desktop/             ← Tauri shell (later)
 ```
 
-Each package has: its own `CLAUDE.md` stating scope and forbidden imports, its
-own test suite, and a public API surface defined in `contracts/`. One agent owns
-one package per session. No agent edits `contracts/` after week 0 without the
-owner in the loop — that's the single rule that prevents drift.
+Each crate and package has: its own `CLAUDE.md` stating scope and forbidden
+dependencies, its own test suite, and a public API surface defined in
+`daak-contracts`. One agent owns one crate or package per session. No agent edits
+`daak-contracts` after week 0 without the owner in the loop — that, plus the
+generated-bindings CI check, is what prevents drift.
 
 ---
 

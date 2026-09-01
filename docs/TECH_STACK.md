@@ -14,14 +14,17 @@ expected to be revisited.
 
 | Layer | Choice |
 |---|---|
-| Language | TypeScript 5.9, strict, ES2023 |
-| Runtime | Node 22 LTS; browser for the client |
-| Monorepo | pnpm workspaces |
-| Build | None for libraries — TS source resolution. Vite for the app |
-| Tests | Vitest + fast-check |
-| Lint/format | Biome |
-| Validation | Zod 4 |
-| Storage | SQLite — `better-sqlite3` (Node), `sqlite-wasm` + OPFS (browser) |
+| Core language | Rust 2024, for the engine, store, sync, MIME and adapters |
+| Client language | TypeScript 5.9, strict, for UI and plugins |
+| Contracts | Defined in Rust, TypeScript generated. Drift is a CI failure |
+| Client ↔ core | `daakd`, a local daemon. JSON-RPC over WebSocket |
+| Runtime | Rust 1.94+ for the core; Node 22 LTS for tooling and the client |
+| Monorepo | cargo workspace + pnpm workspace, side by side |
+| Build | `cargo build` for the core. No build step for TS libraries; Vite for the app |
+| Tests | `cargo test` + proptest (core); Vitest + fast-check (client) |
+| Lint/format | clippy + rustfmt (core); Biome (client) |
+| Validation | Rust types at the core boundary; Zod for plugin and agent input |
+| Storage | SQLite via `rusqlite`, one native implementation in the core |
 | Search | SQLite FTS5 |
 | Protocol | JMAP (RFC 8620/8621), hand-rolled client |
 | Dev server | Stalwart via Docker Compose |
@@ -36,32 +39,48 @@ expected to be revisited.
 
 ---
 
-## D-01 — TypeScript everywhere
+## D-01 — Rust core, TypeScript client
 
-**Chosen:** TypeScript 5.9, `strict` plus `noUncheckedIndexedAccess` and
-`exactOptionalPropertyTypes`.
+**Chosen:** the engine is Rust — store, sync, MIME, threading, search, the
+provider adapters and the command registry. The client is TypeScript — the React
+shell, view models, keymap and the plugin host. They meet at `daakd`, a local
+daemon (D-16), over contracts defined in Rust and generated into TypeScript
+(D-15).
 
-**Why:** one language across the browser client, the Node engine, the sync
-engine and the plugin API means one set of contracts, literally shared rather
-than mirrored. `@daak/contracts` being importable by every layer is the whole
-architecture; that is worth more than any per-layer language advantage.
+**Why:** the parts of Daak where correctness and speed actually matter are the
+parts Rust is good at. Reconciliation is the code most likely to be *plausibly*
+wrong, and a type system that makes illegal states unrepresentable is worth real
+money there. MIME parsing over a hostile corpus wants memory safety and
+`mail-parser`, which is battle-tested inside an actual mail server. The 500k-row
+search and index budgets stop being a tuning exercise. And a native core makes
+Tauri packaging and a single-binary self-host story fall out rather than being
+retrofitted.
 
-The extra-strict flags are on from commit one because they cost nothing now and
-are close to unadoptable at 25k lines.
+**Over:** TypeScript everywhere, which was the original decision here. That
+bought one literally-shared contracts package across browser, engine and
+plugins — no generation step, no drift, one language for every lane.
 
-**Over:** Rust for the engine with a TS client. Faster and more robust, and it
-splits the contracts in two — which is exactly the seam the plan says must not
-drift while several agents work in parallel.
+**The cost, stated plainly:** this splits the contract across two languages,
+which is the exact seam the build plan warns must not drift while several lanes
+run in parallel. It is a real risk and it is accepted deliberately.
 
-**Revisit if:** the sync engine or search becomes CPU-bound in a way profiling
-cannot fix, at which point a Rust core behind the same interfaces is a
-contained change (and `store` is already driver-abstracted for it).
+**How the cost is contained:** D-15. Contracts are defined once in Rust and the
+TypeScript is generated and committed; CI regenerates and fails on any diff.
+Drift becomes a build failure rather than something review has to catch — which
+is a stronger guarantee than the single-language version had, where nothing
+mechanically stopped two packages describing the same shape differently.
+
+**Revisit if:** the generation step turns out to be friction rather than a
+guardrail — the tell would be lanes working around generated types instead of
+changing the Rust definition.
 
 ---
 
-## D-02 — pnpm workspaces, no build step for libraries
+## D-02 — cargo workspace + pnpm workspace, no build step for TS libraries
 
-**Chosen:** pnpm workspaces. Internal packages export `./src/index.ts` directly
+**Chosen:** a cargo workspace under `crates/` and a pnpm workspace under
+`packages/`, side by side in one repository. Internal TS packages export
+`./src/index.ts` directly
 and resolve through tsconfig paths. Typecheck is one root `tsc --noEmit`. Only
 `web` has a build, via Vite.
 
@@ -79,9 +98,15 @@ pay for its configuration.
 
 ---
 
-## D-03 — Vitest and fast-check
+## D-03 — cargo test + proptest, Vitest + fast-check
 
-**Chosen:** Vitest for everything; fast-check for property tests.
+**Chosen:** `cargo test` with `proptest` for the core; Vitest with `fast-check`
+for the client.
+
+The sync engine's convergence property — for any sequence of local mutations and
+any injected fault pattern, local state converges to server state after
+reconnect — is a proptest, written before the implementation. That test is the
+whole reason property-based testing is non-negotiable here.
 
 **Why:** Vitest transpiles TS with no configuration, which is what makes D-02
 work. Property-based testing is not optional here — the build plan's central
@@ -94,7 +119,7 @@ joins for `web` rather than replacing Vitest.
 
 ---
 
-## D-04 — Biome over ESLint + Prettier
+## D-04 — clippy + rustfmt for the core, Biome for the client
 
 **Chosen:** Biome 2, one config, one command.
 
@@ -111,10 +136,12 @@ the import table in ARCHITECTURE.md), which today are enforced by review.
 
 ---
 
-## D-05 — Zod 4 for every persisted and crossing-a-boundary shape
+## D-05 — Zod 4 at the client boundary
 
-**Chosen:** Zod for the store schema shapes, provider payloads, command
-arguments, plugin manifests and annotator output.
+**Chosen:** Zod validates what enters the client from somewhere untrusted —
+plugin manifests, plugin-registered command arguments, and anything an agent
+sends. Persisted shapes and provider payloads are validated by Rust types in the
+core, so Zod's role is narrower than it was under the all-TypeScript plan.
 
 **Why:** command arguments must be validated before a handler runs — that is
 precisely what makes a command safe to expose to an agent. Having one validation
@@ -130,27 +157,43 @@ a near-drop-in for the subset we use.
 
 ---
 
-## D-06 — SQLite, two drivers, no ORM
+## D-06 — SQLite via `rusqlite`, one native store, no ORM
 
-**Chosen:** SQLite with FTS5. `better-sqlite3` on Node, `@sqlite.org/sqlite-wasm`
-over OPFS in the browser, behind one driver interface in `@daak/store`.
-Hand-written SQL and numbered migrations.
+**Chosen by me, at the owner's request.** SQLite with FTS5, through `rusqlite`
+with the bundled feature so there is no system dependency. One implementation,
+living in the Rust core. Hand-written SQL and numbered migrations keyed on
+`user_version`. No browser-side store.
 
-**Why:** the same schema and the same queries run on the server and in the
-browser, so `store` is written once. FTS5 is in both builds, so search does not
-need a second engine.
+**Why this changed:** the previous decision carried two drivers —
+`better-sqlite3` on Node and `sqlite-wasm` over OPFS in the browser — because
+the store was TypeScript and had to run in both places. Choosing a Rust core
+(D-01) removes that constraint entirely, and with it the single largest unknown
+in the whole stack: whether OPFS SQLite holds up at 500k messages across
+browsers. That risk does not need mitigating now; it needs not existing.
 
-No ORM because the queries that matter here — recursive CTEs for threads, FTS5
-with custom ranking, partial indexes for the unread counts — are exactly the
-ones an ORM makes harder to write and harder to read. The schema is small and
-the queries are the product.
+One store implementation instead of two also means one schema, one set of
+queries, one migration path, and one place where the "rebuildable from blobs +
+events" invariant is enforced.
 
-**Over:** Drizzle (good types, wrong layer for this); IndexedDB directly (no
-FTS, worse ergonomics); a server-only store (kills offline, which is the point).
+**Still no ORM,** for the same reason as before: the queries that matter here are
+recursive CTEs for threads, FTS5 with custom ranking, and partial indexes for
+unread counts — exactly what Diesel or SeaORM would put a layer over. The schema
+is small and the queries are the product.
 
-**Revisit if:** OPFS SQLite proves unreliable across browsers at 500k messages —
-the fallback is a Node engine with the browser as a thin client, which the
-driver interface already permits.
+**`rusqlite` over `sqlx`:** sqlx offers compile-time-checked SQL, which is
+genuinely attractive. But its SQLite support is async-first and less mature for
+embedded use, and `rusqlite` being synchronous is a better fit for "single writer
+per account", which is already a sync-engine invariant rather than a limitation.
+
+**The consequence worth knowing:** offline-first now means the *daemon* holds
+local state, not the browser. The web client needs `daakd` running. For a
+self-hostable product aimed at developers that is the normal shape — and it is
+what makes the single-binary story possible — but it does mean Daak is not a URL
+you open with nothing installed. Say the word if that trade is wrong for you.
+
+**Revisit if:** a pure-browser deployment becomes a requirement, at which point
+the options are compiling the core to WASM with an OPFS VFS (hard, and a research
+project) or a thin browser store for a cache-only subset.
 
 ---
 
@@ -306,13 +349,68 @@ be driven from outside the UI, they are not commands.
 
 ---
 
-## D-14 — Node 22 LTS as the runtime floor
+## D-14 — Toolchain floors
 
-**Chosen:** Node ≥ 22.12.
+**Chosen:** Rust 1.94 (2024 edition) for the core. Node ≥ 22.12 for the client
+and for tooling.
 
-**Why:** native TypeScript type-stripping (so tools in `tools/` run without a
-loader), stable `fetch`, and modern `AbortSignal` behaviour. 22 is LTS through
-2027.
+**Why:** Rust 1.94 is what the workspace is developed against and the MSRV is
+pinned in `rust-toolchain.toml` so every agent and CI run compiles identically.
+Node 22 is LTS through 2027, has native TypeScript type-stripping so repo tools
+run without a loader, and stable `fetch`.
+
+---
+
+## D-15 — Contracts defined in Rust, TypeScript generated
+
+**Chosen:** every persisted shape, error kind, capability and RPC message is
+defined once in the `daak-contracts` crate. TypeScript types are generated from
+it and **committed to the repo**. CI regenerates and fails if the result differs
+from what is checked in.
+
+**Why:** this is the entire mitigation for the risk D-01 accepts. Two
+hand-maintained definitions of the same shape drift — always, and silently, and
+usually at the moment a third lane starts depending on both. A generated
+definition with a CI diff check cannot: changing the Rust type without
+regenerating is a red build, and changing the TypeScript by hand is a red build.
+
+Committing the generated output (rather than generating at build time) means the
+TypeScript side needs no Rust toolchain to develop against, and that a reviewer
+sees the shape change in the diff rather than having to imagine it.
+
+**Over:** a neutral IDL (protobuf, JSON Schema) generating both sides — one more
+language to learn and a worse fit for Rust's enums, which are what make the
+intent and event taxonomies precise. Hand-maintained parallel definitions — the
+failure mode this decision exists to prevent.
+
+**Open:** the generator itself. `ts-rs` and `specta` are the candidates; pick by
+trying both against the existing `IntentOp` and `EventPayload` unions, which are
+the shapes most likely to generate badly.
+
+---
+
+## D-16 — `daakd`: the client talks to the core over a local daemon
+
+**Chosen:** the Rust core runs as `daakd`, a local process. The web client talks
+to it over JSON-RPC on a WebSocket. In the desktop build, Tauri hosts the same
+core in-process and the same RPC surface travels over IPC instead.
+
+**Why:** it gives one deployment shape that covers every case — run it on your
+laptop, run it on your server, embed it in the desktop app — without the client
+needing to know which. The daemon is also the natural home for anything that
+must work with no UI open: rules firing on new mail, annotators running, and the
+MCP server exposing commands to agents. An agent should not need a browser tab
+to archive a message.
+
+**The command registry lives in the core** for exactly that reason. `ui-core`
+keeps the keymap, palette and view-model concerns and invokes commands over RPC.
+That keeps "one action layer, six front doors" true for agents and rules, not
+just for the UI.
+
+**Open:** whether plugins stay JavaScript in the client (what extension authors
+know, and where the UI contributions are) or become WASM in the core (better
+sandboxing, one place for capability enforcement). Starting with JS in the
+client, registering into the core over the same RPC.
 
 ---
 
