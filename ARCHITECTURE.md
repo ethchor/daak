@@ -22,9 +22,6 @@ Local mail system    blobs + events → messages, threads, search
       User
 ```
 
-All of the above except the last two lines is the Rust core, running as `daakd`.
-The client is a consumer of it, and so is an agent.
-
 ---
 
 ## The invariants
@@ -93,80 +90,32 @@ branch that handles the happy path and one error case is missing this one.
 
 ---
 
-## The language boundary
-
-The core is Rust. The client is TypeScript. They meet at `daakd` over JSON-RPC,
-and at a contract defined once in Rust and generated into TypeScript.
-
-```
-┌─ TypeScript ────────────────────────────────┐
-│  web            React + Radix shell         │
-│  ui-core        keymap, palette, view models│
-│  plugin-host    JS extensions, sandboxed    │
-└───────────────────┬─────────────────────────┘
-                    │  JSON-RPC / WebSocket (IPC under Tauri)
-┌─ Rust ────────────┴─────────────────────────┐
-│  daakd          the daemon, RPC + MCP       │
-│  commands       the one action layer        │
-│  sync           cursors, intents, reconcile │
-│  store          SQLite, blobs + events      │
-│  mime threading search                      │
-│  provider       JMAP · mock · IMAP later    │
-└─────────────────────────────────────────────┘
-```
-
-**The contract is generated, not mirrored.** `daak-contracts` is the only place a
-persisted shape, error kind, capability or RPC message is defined. The
-TypeScript is produced from it and committed; CI regenerates and fails on a diff.
-Editing the generated file by hand is a red build, and so is changing the Rust
-without regenerating.
-
-This is the mitigation for the one real risk in a two-language stack. Do not
-work around a generated type — change the Rust definition.
-
-**Anything that must work with no UI open lives in the core.** Rules firing on
-new mail, annotators, the MCP server, the command registry itself. An agent
-should not need a browser tab to archive a message.
-
----
-
 ## Package boundaries
-
-### Rust — `crates/`
-
-| Crate | Owns | May depend on |
-|---|---|---|
-| `daak-contracts` | Types, error taxonomy, capabilities, traits. Source of truth | — |
-| `daak-mime` | Parse and build RFC 5322/2045 | `contracts` |
-| `daak-threading` | JWZ threading | `contracts` |
-| `daak-store` | SQLite schema, migrations, queries | `contracts` |
-| `daak-provider` | The `MailProvider` trait and shared helpers | `contracts` |
-| `daak-adapter-mock` | Deterministic fake server + fault injection | `contracts`, `provider` |
-| `daak-adapter-jmap` | JMAP provider | `contracts`, `provider` |
-| `daak-sync` | Cursors, intent log, reconciliation | `contracts`, `store`, `mime`, `threading`, `provider` |
-| `daak-search` | FTS5 index and query grammar | `contracts`, `store` |
-| `daak-commands` | The command registry and core commands | `contracts`, `store`, `sync`, `search` |
-| `daak-intelligence` | LLM providers, annotators | `contracts`, `store` |
-| `daak-server` | `daakd`: RPC surface, rules runner, MCP | everything above |
-| `daak-bindings` | Generates the TypeScript contract | `contracts` |
-
-### TypeScript — `packages/`
 
 | Package | Owns | May import |
 |---|---|---|
-| `contracts` | Generated types + a typed RPC client | — |
-| `fixtures` | Golden corpus and expectations. Language-neutral | — |
-| `ui-core` | Keymap, palette, view models | `contracts` |
+| `contracts` | Types, schemas, errors, capabilities, seams | `zod` |
+| `fixtures` | Golden corpus and expectations | `contracts` |
+| `mime` | Parse and build RFC 5322/2045 | `contracts` |
+| `threading` | JWZ threading | `contracts` |
+| `store` | SQLite schema, migrations, queries | `contracts` |
+| `sync` | Cursors, intent log, reconciliation | `contracts`, `store`, `mime`, `threading` |
+| `adapter-mock` | Deterministic fake server + faults | `contracts`, `fixtures` |
+| `adapter-jmap` | JMAP provider | `contracts` |
+| `search` | FTS5 index and query grammar | `contracts`, `store` |
+| `intelligence` | LLM providers, annotators | `contracts` |
+| `ui-core` | View models, command registry, keymap | `contracts`, `store`, `search` |
+| `plugin-host` | Loading, capability sandbox | `contracts` |
 | `web` | React shell | `ui-core`, `contracts` |
-| `plugin-host` | Extension loading, capability sandbox | `contracts` |
 
-Dependencies point one way in both halves. `sync` never depends on a concrete
-adapter — it takes a `MailProvider`. `web` never speaks RPC directly — it goes
-through `ui-core`.
+Dependencies point one way. `sync` never imports an adapter — it talks to
+`MailProvider`. `web` never imports `store` — it talks to `ui-core`.
 
-**The corpus in `packages/fixtures` is shared by both languages.** It is `.eml`
-files and JSON; each side has its own thin loader. Nothing about it is
-TypeScript-specific, and nothing about it changes when a parser is rewritten.
+`contracts` is **locked**. Changing it after week 0 needs the owner in the loop;
+an agent that wants to change an interface has almost always found a bug in its
+own package instead.
+
+---
 
 ## The command layer
 

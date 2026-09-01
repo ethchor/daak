@@ -23,53 +23,42 @@ intelligence.
 - **Understand** — local search, threading, annotations, triage, summaries.
 - **Extend** — plugins, rules, MCP, agent interfaces.
 
-> **Status: week 0.** The stack is settled, the corpus exists, and the contract
-> design is proven — but the core is being written in Rust and that port has
-> just begun. There is no working client yet. See [`docs/STATUS.md`](docs/STATUS.md) for exactly where things
+> **Status: week 1.** Contracts, fixtures, the mock provider and CI exist.
+> There is no working client yet. See [`docs/STATUS.md`](docs/STATUS.md) for exactly where things
 > stand and [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md) for where they are going.
 
 ## Repository
 
 ```text
-crates/                     the Rust core — daakd
-├── daak-contracts/         types, taxonomy, traits. Source of truth
-├── daak-mime/              RFC 5322/2045, byte-preserving
-├── daak-threading/         JWZ threading
-├── daak-store/             SQLite: blobs + events, everything else derived
-├── daak-provider/          the MailProvider trait
-├── daak-adapter-mock/      deterministic fake server + fault injection
-├── daak-adapter-jmap/      JMAP (RFC 8620/8621)
-├── daak-sync/              cursors, intent log, reconciliation
-├── daak-search/            FTS5 index and query grammar
-├── daak-commands/          the command registry
-├── daak-intelligence/      LLM traits, annotators, BYOK
-├── daak-server/            daakd: RPC, rules, MCP
-└── daak-bindings/          generates the TypeScript contract
-packages/                   the TypeScript client
-├── contracts/              generated types + typed RPC client
-├── fixtures/               golden message corpus                        ✅
-├── ui-core/                keymap, palette, view models
-├── plugin-host/            extension loading, capability sandbox
-└── web/                    React + Radix shell
+packages/
+├── contracts/      types, schemas, error taxonomy, the eight seams   ✅
+├── fixtures/       golden message corpus + expectations              ✅
+├── mime/           RFC 5322/2045 parse + build, byte-preserving      week 1
+├── threading/      JWZ threading, deterministic                      week 1
+├── store/          SQLite schema, migrations, queries                week 1
+├── adapter-mock/   deterministic fake server + fault injection       ✅
+├── sync/           cursors, intent log, reconciliation               week 2
+├── adapter-jmap/   JMAP provider (RFC 8620/8621)                     week 2
+├── search/         FTS5 index and query grammar                      week 2
+├── ui-core/        view models, command registry, keymap             week 3
+├── web/            React shell                                       week 3
+├── intelligence/   LLM providers, annotators, BYOK                   week 4
+└── plugin-host/    extension loading, capability sandbox             week 4
 apps/
-├── dev-stalwart/           local JMAP server for development
-└── desktop/                Tauri shell (later)
+└── dev-stalwart/   local JMAP server for development                 week 2
 ```
 
 ## Getting started
 
-Requires Rust 1.94+, Node ≥ 22.12 and pnpm 10.
+Requires Node ≥ 22.12 and pnpm 10.
 
 ```sh
-cargo test           # the core
 pnpm install
-pnpm check           # lint + typecheck + test, the client
+pnpm check      # lint + typecheck + test
 ```
 
-There is no build step for the TypeScript libraries — internal packages resolve
-to their source. The contract types under `packages/contracts/src/generated` are
-produced by `cargo run -p daak-bindings` and committed; CI fails if regenerating
-them produces a diff.
+There is no build step for the libraries — internal packages resolve to their
+TypeScript source.
 
 ## Documents worth reading first
 
