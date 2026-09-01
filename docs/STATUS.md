@@ -55,12 +55,31 @@ a budget, not a measurement.
 
 ## Week 2 — the engine
 
-Not started. `@daak/sync` is the deep-review lane, and the plan is explicit
-about how it gets built: **write the convergence property tests first, get them
-reviewed, then implement against them.** The mock's `apply-then-fail` fault is
-what those properties get written against.
+| Lane | Package | State |
+|---|---|---|
+| A | `@daak/sync` | ✅ Tail, backfill, intent log, reconciliation. 8 tests, 200 property runs |
+| B | `@daak/adapter-jmap` | ⬜ Not started. Independent of sync |
+| C | `@daak/search` | ⬜ Not started. Independent of sync |
+| D | `apps/dev-stalwart` seeding | ⬜ Not started |
 
-`adapter-jmap` and `search` do not depend on sync and can run in parallel.
+`sync` was built tests-first, as the plan requires for this lane: the public
+surface and the convergence properties were committed before a line of the
+engine existed.
+
+### What the convergence property caught
+
+Two bugs, both on early runs, neither of which any example test would have
+found:
+
+- **A stale read lost a change permanently.** The tail stored pre-mutation state
+  *and* advanced the cursor past the change, putting it behind the cursor for
+  good. A user's archive would silently un-archive itself and nothing would ever
+  correct it. The engine now holds every message it mutated as unverified until
+  two consecutive reads agree.
+- **A refresh after a delete deadlocked**, asking a provider for bytes it no
+  longer had, until `settle` hit its round limit.
+
+**255 tests across the repo.**
 
 ## Open decisions
 
@@ -77,6 +96,12 @@ what those properties get written against.
 - Threads are recomputed for a whole account on every projection batch. Correct,
   and O(messages) — fine at 1k, not at 500k. Incremental threading is a week-3
   problem, flagged here so it is a known cost rather than a surprise.
+- `sync` refuses `draft.save` and `message.send`. They need `uploadBlob` plus
+  `submit`, which is the week-4 compose lane; refusing loudly beats a silent
+  no-op that strands an intent for ever.
+- Local ids derive from provider ids, which is stable for JMAP and not for IMAP,
+  where a UIDVALIDITY change renumbers a mailbox. The IMAP adapter has to absorb
+  that below the boundary.
 - The eight seams have one implementation each at most. The plan calls for two
   by day 30, which is what proves an abstraction rather than assuming it.
 - Nothing has been profiled. Every performance claim in this repo is currently a
