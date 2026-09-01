@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Daak">
+  <title>Daak</title>
+  <!--
+    A geometric D sitting on the line a message travels along.
+    The line enters from the left, passes through, and terminates in a node:
+    message → thread → command → agent.
+
+    Drawn in currentColor so it works in monochrome, on light and on dark, and
+    stays legible at 16px.
+  -->
+  <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1.5 16h6" />
+    <path d="M10 4.5v23" />
+    <path d="M10 4.5h5.5A10.5 10.5 0 0 1 15.5 27.5H10" />
+    <path d="M26 16h2.5" />
+  </g>
+  <circle cx="30.2" cy="16" r="1.5" fill="currentColor" />
+</svg>

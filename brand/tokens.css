@@ -1,0 +1,140 @@
+/*
+ * Daak design tokens.
+ *
+ * Mostly monochrome. One memorable accent. Components reference tokens only —
+ * a raw hex code in a component is a review comment, because it is how a
+ * restrained palette stops being restrained.
+ *
+ * Light is the default. Dark follows the system unless [data-theme] overrides.
+ */
+
+:root {
+  /* ---- Base: near-black, warm white, neutral gray ---- */
+  --daak-ink: #16130f; /* text, warm near-black */
+  --daak-ink-muted: #55504a; /* secondary text */
+  --daak-ink-faint: #8a847c; /* metadata, timestamps */
+  --daak-paper: #fbf9f6; /* app background, warm white */
+  --daak-surface: #ffffff; /* raised surfaces: list rows, panels */
+  --daak-surface-sunken: #f2efea; /* wells, code blocks */
+  --daak-line: #e3ded6; /* hairlines and borders */
+  --daak-line-strong: #cdc6bb; /* emphasised dividers */
+
+  /* ---- Accent: deep vermilion. Used sparingly, and never decoratively. ---- */
+  --daak-accent: #c43d20;
+  --daak-accent-hover: #a33116;
+  --daak-accent-contrast: #ffffff; /* text on accent */
+  --daak-accent-wash: #fbeee9; /* selected row, subtle highlight */
+
+  /* ---- Status. Muted on purpose: mail is not a dashboard. ---- */
+  --daak-ok: #2f6b4f;
+  --daak-warn: #8a6d1f;
+  --daak-danger: #a33116;
+  --daak-offline: #6b6560;
+
+  /* ---- Focus. Always visible; this is a keyboard-first product. ---- */
+  --daak-focus: #1f6feb;
+  --daak-focus-ring: 0 0 0 2px var(--daak-paper), 0 0 0 4px var(--daak-focus);
+
+  /* ---- Type ---- */
+  --daak-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    "Helvetica Neue", sans-serif;
+  --daak-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono", monospace;
+
+  --daak-text-xs: 0.6875rem; /* 11px — dense metadata */
+  --daak-text-sm: 0.8125rem; /* 13px — list rows, UI default */
+  --daak-text-base: 0.9375rem; /* 15px — message bodies */
+  --daak-text-lg: 1.125rem; /* 18px — subjects */
+  --daak-text-xl: 1.5rem; /* 24px — headings */
+
+  --daak-leading-tight: 1.25;
+  --daak-leading-normal: 1.5;
+  --daak-leading-relaxed: 1.65; /* reading a message body */
+
+  --daak-weight-normal: 400;
+  --daak-weight-medium: 500;
+  --daak-weight-strong: 600; /* unread. Never bolder than this. */
+
+  /* ---- Space: 4px base ---- */
+  --daak-space-1: 0.25rem;
+  --daak-space-2: 0.5rem;
+  --daak-space-3: 0.75rem;
+  --daak-space-4: 1rem;
+  --daak-space-6: 1.5rem;
+  --daak-space-8: 2rem;
+  --daak-space-12: 3rem;
+
+  /* ---- Shape. Quiet: small radii, hairline borders, almost no shadow. ---- */
+  --daak-radius-sm: 3px;
+  --daak-radius: 6px;
+  --daak-radius-lg: 10px;
+  --daak-shadow-panel: 0 1px 2px rgb(22 19 15 / 6%), 0 8px 24px rgb(22 19 15 / 8%);
+
+  /* ---- Motion. Fast or absent. Nothing waits on an animation. ---- */
+  --daak-duration-instant: 0ms;
+  --daak-duration-fast: 90ms;
+  --daak-duration: 160ms;
+  --daak-ease: cubic-bezier(0.2, 0, 0.13, 1);
+
+  /* ---- Layout ---- */
+  --daak-row-height: 56px; /* virtualised list row; keep fixed */
+  --daak-sidebar-width: 232px;
+  --daak-reading-measure: 68ch;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --daak-ink: #ece7e1;
+    --daak-ink-muted: #a49d95;
+    --daak-ink-faint: #776f68;
+    --daak-paper: #141312;
+    --daak-surface: #1b1a18;
+    --daak-surface-sunken: #100f0e;
+    --daak-line: #2a2825;
+    --daak-line-strong: #3d3a36;
+
+    /* Lifted so it still clears 4.5:1 against a near-black ground. */
+    --daak-accent: #e8613f;
+    --daak-accent-hover: #f2795a;
+    --daak-accent-contrast: #16130f;
+    --daak-accent-wash: #2a1a14;
+
+    --daak-ok: #6fbf94;
+    --daak-warn: #d4b45a;
+    --daak-danger: #f2795a;
+    --daak-offline: #8a827a;
+
+    --daak-focus: #4c8dff;
+    --daak-shadow-panel: 0 1px 2px rgb(0 0 0 / 40%), 0 8px 24px rgb(0 0 0 / 45%);
+  }
+}
+
+:root[data-theme="dark"] {
+  --daak-ink: #ece7e1;
+  --daak-ink-muted: #a49d95;
+  --daak-ink-faint: #776f68;
+  --daak-paper: #141312;
+  --daak-surface: #1b1a18;
+  --daak-surface-sunken: #100f0e;
+  --daak-line: #2a2825;
+  --daak-line-strong: #3d3a36;
+
+  --daak-accent: #e8613f;
+  --daak-accent-hover: #f2795a;
+  --daak-accent-contrast: #16130f;
+  --daak-accent-wash: #2a1a14;
+
+  --daak-ok: #6fbf94;
+  --daak-warn: #d4b45a;
+  --daak-danger: #f2795a;
+  --daak-offline: #8a827a;
+
+  --daak-focus: #4c8dff;
+  --daak-shadow-panel: 0 1px 2px rgb(0 0 0 / 40%), 0 8px 24px rgb(0 0 0 / 45%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --daak-duration-fast: 0ms;
+    --daak-duration: 0ms;
+  }
+}
