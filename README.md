@@ -23,8 +23,9 @@ intelligence.
 - **Understand** — local search, threading, annotations, triage, summaries.
 - **Extend** — plugins, rules, MCP, agent interfaces.
 
-> **Status: week 1.** Contracts, fixtures, the mock provider and CI exist.
-> There is no working client yet. See [`docs/STATUS.md`](docs/STATUS.md) for exactly where things
+> **Status: week 1 complete.** Parsing, threading, storage and a chaos-capable
+> mock provider all work, with 247 tests. The sync engine is next; there is no
+> working client yet. See [`docs/STATUS.md`](docs/STATUS.md) for exactly where things
 > stand and [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md) for where they are going.
 
 ## Repository
@@ -33,9 +34,9 @@ intelligence.
 packages/
 ├── contracts/      types, schemas, error taxonomy, the eight seams   ✅
 ├── fixtures/       golden message corpus + expectations              ✅
-├── mime/           RFC 5322/2045 parse + build, byte-preserving      week 1
-├── threading/      JWZ threading, deterministic                      week 1
-├── store/          SQLite schema, migrations, queries                week 1
+├── mime/           RFC 5322/2045 parse, byte-preserving              ✅
+├── threading/      JWZ threading, deterministic                      ✅
+├── store/          SQLite schema, migrations, queries                ✅
 ├── adapter-mock/   deterministic fake server + fault injection       ✅
 ├── sync/           cursors, intent log, reconciliation               week 2
 ├── adapter-jmap/   JMAP provider (RFC 8620/8621)                     week 2
