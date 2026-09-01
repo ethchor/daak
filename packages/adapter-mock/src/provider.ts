@@ -113,6 +113,14 @@ export const createMockProvider = (options: MockProviderOptions = {}): MockProvi
         return { intentId: intent.intentId, status: "applied", cursor: String(server.state) };
       }
       case "mailboxes.change": {
+        // A real server refuses a move into a mailbox that does not exist, and
+        // an engine that never sees a rejection has never had to walk back its
+        // optimistic state.
+        for (const mailbox of mutation.add) {
+          if (!server.mailboxes.has(mailbox)) {
+            throw DaakError.permanent(ErrorCodes.NOT_FOUND, `no mailbox ${mailbox}`);
+          }
+        }
         for (const providerId of mutation.providerIds) {
           server.touch(providerId, (message) => {
             for (const mailbox of mutation.add) message.mailboxProviderIds.add(mailbox);

@@ -1,9 +1,9 @@
+import type { FaultKind, ProviderOp } from "@daak/adapter-mock";
 import type { IntentOp } from "@daak/contracts";
 import { mailboxId, messageId } from "@daak/contracts";
-import type { FaultKind, ProviderOp } from "@daak/adapter-mock";
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { localMessageId } from "../src/ids.js";
+import { localMailboxId, localMessageId } from "../src/ids.js";
 import { ACCOUNT, localSnapshot, makeRig, serverSnapshot } from "./harness.js";
 
 /**
@@ -64,7 +64,12 @@ const arbFault = fc.record({
   times: fc.integer({ min: 1, max: 3 }),
 });
 
-const toOp = (mutation: { kind: string; target: number; add?: string[]; remove?: string[] }): IntentOp => {
+const toOp = (mutation: {
+  kind: string;
+  target: number;
+  add?: string[];
+  remove?: string[];
+}): IntentOp => {
   const target = messageId(localMessageId(ACCOUNT, `P${mutation.target}`));
   if (mutation.kind === "keywords") {
     return {
@@ -78,8 +83,8 @@ const toOp = (mutation: { kind: string; target: number; add?: string[]; remove?:
     return {
       op: "mailboxes.change",
       messageIds: [target],
-      add: (mutation.add ?? []).map((m) => mailboxId(`mb:${m}`)),
-      remove: (mutation.remove ?? []).map((m) => mailboxId(`mb:${m}`)),
+      add: (mutation.add ?? []).map((m) => mailboxId(localMailboxId(ACCOUNT, m))),
+      remove: (mutation.remove ?? []).map((m) => mailboxId(localMailboxId(ACCOUNT, m))),
     };
   }
   return { op: "message.destroy", messageIds: [target] };
@@ -120,7 +125,7 @@ describe("convergence", () => {
           }
         },
       ),
-      { numRuns: 60 },
+      { numRuns: 200 },
     );
   }, 120_000);
 
@@ -191,8 +196,8 @@ describe("convergence", () => {
       await rig.engine.record({
         op: "mailboxes.change",
         messageIds: [messageId(localMessageId(ACCOUNT, "P2"))],
-        add: [mailboxId("mb:ARCHIVE")],
-        remove: [mailboxId("mb:INBOX")],
+        add: [mailboxId(localMailboxId(ACCOUNT, "ARCHIVE"))],
+        remove: [mailboxId(localMailboxId(ACCOUNT, "INBOX"))],
       });
       await rig.engine.settle();
 
@@ -256,7 +261,7 @@ describe("convergence", () => {
       await rig.engine.record({
         op: "mailboxes.change",
         messageIds: [messageId(localMessageId(ACCOUNT, "P1"))],
-        add: [mailboxId("mb:NOT-A-REAL-MAILBOX")],
+        add: [mailboxId(localMailboxId(ACCOUNT, "NOT-A-REAL-MAILBOX"))],
         remove: [],
       });
       await rig.engine.settle({ maxRounds: 20 });

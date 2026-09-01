@@ -1,12 +1,12 @@
-import { type AccountId, type Instant, accountId } from "@daak/contracts";
-import { type MockProvider, createMockProvider } from "@daak/adapter-mock";
+import { createMockProvider, type MockProvider } from "@daak/adapter-mock";
+import { type AccountId, accountId, type Instant } from "@daak/contracts";
 import { parseMessage } from "@daak/mime";
-import { type Store, createNodeDriver, openStore } from "@daak/store";
-import { threadMessages } from "@daak/threading";
 import type { MessageFields, Projectors } from "@daak/store";
+import { createNodeDriver, openStore, type Store } from "@daak/store";
+import { threadMessages } from "@daak/threading";
 import { createSyncEngine } from "../src/engine.js";
+import { localMailboxId, providerIdOf } from "../src/ids.js";
 import type { SyncEngine } from "../src/types.js";
-import { localMailboxId } from "../src/ids.js";
 
 export const ACCOUNT: AccountId = accountId("acct");
 
@@ -77,9 +77,7 @@ export const localSnapshot = (
     result[message.providerId] = {
       keywords: [...message.keywords].sort(),
       // Back to provider ids, so the comparison is like for like.
-      mailboxes: message.mailboxIds
-        .map((id) => id.replace(/^mb:/, ""))
-        .sort(),
+      mailboxes: message.mailboxIds.map(providerIdOf).sort(),
     };
   }
   return result;
@@ -97,4 +95,4 @@ export const serverSnapshot = (
   return result;
 };
 
-export { localMailboxId };
+export { localMailboxId, providerIdOf };

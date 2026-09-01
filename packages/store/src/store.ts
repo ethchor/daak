@@ -21,6 +21,7 @@ import {
   type SqliteDriver,
 } from "./driver.js";
 import { createEventLog, type EventLog } from "./events.js";
+import { type CursorStore, createCursorStore, createIntentLog, type IntentLog } from "./intents.js";
 import { currentVersion, LATEST_VERSION, migrate, rollback } from "./migrations.js";
 import { createProjector, type Projector, type Projectors } from "./projections.js";
 
@@ -68,6 +69,10 @@ export interface Store {
   readonly blobs: BlobStore;
   readonly events: EventLog;
   readonly projector: Projector;
+  /** Pending local mutations. Not a projection — see `intents.ts`. */
+  readonly intents: IntentLog;
+  /** Where sync has reached. Written from the log, read directly. */
+  readonly cursors: CursorStore;
   readonly driver: SqliteDriver;
 
   migrate(target?: number): number;
@@ -105,6 +110,8 @@ export const openStore = ({ driver, projectors }: StoreOptions): Store => {
   const blobs = createBlobStore(driver);
   const events = createEventLog(driver);
   const projector = createProjector(driver, projectors);
+  const intents = createIntentLog(driver);
+  const cursors = createCursorStore(driver);
 
   const MESSAGE_COLUMNS = `
     m.id, m.account_id, m.blob_id, m.thread_id, m.provider_id, m.received_at, m.sent_at,
@@ -170,6 +177,8 @@ export const openStore = ({ driver, projectors }: StoreOptions): Store => {
     blobs,
     events,
     projector,
+    intents,
+    cursors,
     driver,
 
     migrate: (target = LATEST_VERSION) => migrate(driver, target),

@@ -13,6 +13,8 @@ export type { NodeDriverOptions } from "./drivers/node.js";
 export { createNodeDriver } from "./drivers/node.js";
 export type { AppendEventInput, EventLog } from "./events.js";
 export { createEventLog } from "./events.js";
+export type { CursorStore, IntentLog } from "./intents.js";
+export { createCursorStore, createIntentLog } from "./intents.js";
 export type { Migration } from "./migrations.js";
 export { currentVersion, LATEST_VERSION, MIGRATIONS, migrate, rollback } from "./migrations.js";
 export type { MessageFields, Projector, Projectors, ThreadInput } from "./projections.js";

@@ -5,6 +5,7 @@
  * test/convergence.test.ts and CLAUDE.md.
  */
 export { createSyncEngine } from "./engine.js";
+export { localMailboxId, localMessageId } from "./ids.js";
 export type {
   BackfillResult,
   PushResult,
@@ -13,4 +14,3 @@ export type {
   SyncEngineOptions,
   TailResult,
 } from "./types.js";
-export { localMailboxId, localMessageId } from "./ids.js";
