@@ -228,10 +228,29 @@ tune against are the numbers they will see.
 
 ## D-09 — Wrap a MIME library, do not write one
 
-**Chosen:** wrap a maintained parser behind `@daak/mime`'s own types and validate
-the wrapper against the corpus. Candidates: `postal-mime` (parse — runs in the
-browser, actively maintained) and `mimetext` (build). Both to be evaluated
-against the corpus before either is adopted; record the result here.
+**Chosen:** `postal-mime` for parsing, wrapped behind `@daak/mime`'s own types.
+Build (`mimetext` or similar) is deferred to the compose lane in week 4, where
+there will be something to build.
+
+**The evaluation, since this decision demanded one.** All 22 fixtures were run
+through `postal-mime` raw and compared against their expectations. 15 passed
+untouched. It got right every part that is genuinely hard: Shift_JIS and
+ISO-8859-1 bodies, RFC 2047 encoded words in three charsets and scripts, an
+unclosed boundary, 400+ headers with a 60-address folded header, `message/rfc822`
+nesting, quoted-printable and base64. It also preserves RFC 5322 groups rather
+than flattening them lossily, which was the one thing that would have disqualified
+it.
+
+The seven divergences were all policy, which is exactly what a wrapper is for:
+what counts as an attachment (inline `cid:` images, detached signatures and
+calendar bodies are not), `List-Id` extraction from inside the angle brackets,
+angle-bracket stripping on message ids, group flattening, and refusing to return
+an unparseable `Date` as if it were a date.
+
+The one thing it does not provide is the part tree, which the corpus asserts on.
+`src/structure.ts` scans for it — Content-Type headers and boundary delimiters
+only, no decoding and no charset work, which keeps it small enough to be
+obviously right.
 
 **Why:** it is the highest-leverage place to not write code. Nobody writes a
 correct MIME parser first time, and the failure mode is silent — a mislabeled
@@ -241,8 +260,10 @@ safe: if a library fails a fixture, we find out before users do.
 The wrapper is the deliverable. It is what lets the library be replaced later
 without touching anything else.
 
-**Revisit if:** a candidate fails corpus fixtures it cannot be patched around,
-in which case wrap a different one — not write our own.
+**Revisit if:** `postal-mime` fails a corpus fixture the wrapper cannot correct,
+in which case wrap a different library — not write our own. The wrapper is what
+makes that a contained change: 91 tests pin the behaviour, and the corpus proves
+any replacement.
 
 ---
 

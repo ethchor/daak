@@ -9,20 +9,40 @@ the original bytes for every fixture that round-trips.
 
 ## Wrap, don't write
 
-Agents write plausible MIME parsers. Nobody writes a correct one first time.
-Start from a maintained library, wrap it behind our own types, and use the
-corpus to prove the wrapper. `postal-mime` (parse, works in browser and Node)
-and `mimetext` (build) are the current candidates — evaluate both against the
-corpus before committing to either, and record the outcome in
-`docs/TECH_STACK.md`.
+`postal-mime` does the decoding. This package owns the policy.
 
-The wrapper is the point: it is what lets us replace the library in 2029
+The library was evaluated against the whole corpus before adoption (see
+`docs/TECH_STACK.md` D-09): it is sound on charsets, encoded words, transfer
+encodings, unclosed boundaries and nesting. What it does not do is decide what
+counts as an attachment, refuse a nonsense date, or expose the part tree — and
+those are this package's job.
+
+The wrapper is the point: it is what lets the library be replaced in 2029
 without touching anything else.
+
+## The policy this package owns
+
+Each rule exists because a fixture says so. Change one and the corpus will tell
+you.
+
+- An inline part referenced by `cid:` is rendered, not listed. A paperclip on
+  every newsletter is a small bug that erodes trust in the whole list view.
+- A detached signature (`pkcs7`, `pgp`) is protocol, not a file.
+- `text/calendar` carried as an alternative body is the invite; one a user
+  actually attached has `Content-Disposition: attachment` and stays an
+  attachment.
+- An attachment the sender never named still gets a stable display name.
+- An unparseable `Date` yields no `sentAt`. Never substitute the current time —
+  that silently reorders someone's mailbox.
+- Address groups flatten to their members. A reply-all that drops two recipients
+  is unforgivable.
+- Malformed input produces `warnings`, not an exception. Only input that is not
+  a message at all throws.
 
 ## Allowed imports
 
-`@daak/contracts`, `@daak/fixtures` (tests only), one parse library, one build
-library.
+`@daak/contracts`, `postal-mime`, `@daak/fixtures` (tests only). A build library
+joins this list when the compose lane starts in week 4.
 
 ## Forbidden
 

@@ -53,7 +53,18 @@ importers:
 
   packages/intelligence: {}
 
-  packages/mime: {}
+  packages/mime:
+    dependencies:
+      '@daak/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      postal-mime:
+        specifier: ^2.4.6
+        version: 2.7.6
+    devDependencies:
+      '@daak/fixtures':
+        specifier: workspace:*
+        version: link:../fixtures
 
   packages/plugin-host: {}
 
@@ -566,6 +577,9 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
+  postal-mime@2.7.6:
+    resolution: {integrity: sha512-UUlyE2KlxmvwMGq060onF/VWU3zD6dVW31FwokQ5v26jWd35fbs2MoTFzh+jXnPwAyV2MULMKXcBInGOl5TO6Q==}
+
   postcss@8.5.26:
     resolution: {integrity: sha512-u82N74LFzG8ca+dD8puPnplTXoGH4fTPpVGuIbt36G3qvNlkvfD0lEAZSxaly3KX8TS/L1A1gsCEmvKmBcVbkQ==}
     engines: {node: ^10 || ^12 || >=14}
@@ -1042,6 +1056,8 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.7: {}
+
+  postal-mime@2.7.6: {}
 
   postcss@8.5.26:
     dependencies:

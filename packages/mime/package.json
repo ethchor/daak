@@ -10,5 +10,12 @@
   },
   "scripts": {
     "test": "vitest run --root ../.. packages/mime"
+  },
+  "dependencies": {
+    "@daak/contracts": "workspace:*",
+    "postal-mime": "^2.4.6"
+  },
+  "devDependencies": {
+    "@daak/fixtures": "workspace:*"
   }
 }
