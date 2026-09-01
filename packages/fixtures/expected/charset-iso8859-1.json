@@ -1,9 +1,6 @@
 {
   "description": "Quoted-printable ISO-8859-1 body. Decoding as UTF-8 produces mojibake, which is the bug this catches.",
-  "categories": [
-    "charset",
-    "quoted-printable"
-  ],
+  "categories": ["charset", "quoted-printable"],
   "headers": {
     "subject": "Résumé",
     "from": [
@@ -12,19 +9,12 @@
         "address": "francois@example.fr"
       }
     ],
-    "messageId": [
-      "latin1-01@example.fr"
-    ],
+    "messageId": ["latin1-01@example.fr"],
     "date": "2026-08-08T07:30:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "text": {
-    "contains": [
-      "Voilà le résumé de la réunion.",
-      "François"
-    ]
+    "contains": ["Voilà le résumé de la réunion.", "François"]
   },
   "attachments": [],
   "hasAttachment": false,

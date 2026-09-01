@@ -1,10 +1,6 @@
 {
   "description": "text/plain and text/html alternatives; a display name containing a comma; a non-UTC offset.",
-  "categories": [
-    "multipart",
-    "quoted-printable",
-    "address-quoting"
-  ],
+  "categories": ["multipart", "quoted-printable", "address-quoting"],
   "headers": {
     "subject": "Design review moved to Thursday",
     "from": [
@@ -19,25 +15,15 @@
         "address": "team@example.net"
       }
     ],
-    "messageId": [
-      "alt-0001@example.org"
-    ],
+    "messageId": ["alt-0001@example.org"],
     "date": "2026-08-04T05:32:00.000Z"
   },
-  "structure": [
-    "multipart/alternative",
-    "text/plain",
-    "text/html"
-  ],
+  "structure": ["multipart/alternative", "text/plain", "text/html"],
   "text": {
-    "contains": [
-      "Design review moved to Thursday 15:00."
-    ]
+    "contains": ["Design review moved to Thursday 15:00."]
   },
   "html": {
-    "contains": [
-      "<b>Thursday 15:00</b>"
-    ]
+    "contains": ["<b>Thursday 15:00</b>"]
   },
   "attachments": [],
   "hasAttachment": false,

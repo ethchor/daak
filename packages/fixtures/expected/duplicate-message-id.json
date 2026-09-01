@@ -1,10 +1,6 @@
 {
   "description": "Reuses simple-plaintext's Message-ID with different content. Deduplication must key on content, not on Message-ID.",
-  "categories": [
-    "threading",
-    "malformed",
-    "dedup"
-  ],
+  "categories": ["threading", "malformed", "dedup"],
   "headers": {
     "subject": "Unrelated mail that reuses a Message-ID",
     "from": [
@@ -13,14 +9,10 @@
         "address": "else@example.com"
       }
     ],
-    "messageId": [
-      "20260803091422.1a2b3c@example.org"
-    ],
+    "messageId": ["20260803091422.1a2b3c@example.org"],
     "date": "2026-08-17T08:00:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "attachments": [],
   "hasAttachment": false,
   "notes": "Two distinct blobs, one Message-ID. Threading may group them; the store must never collapse them into one message.",

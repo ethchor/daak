@@ -71,7 +71,9 @@ export const FixtureExpectationSchema = z.object({
 
   /** Flattened content types, depth-first, container first. */
   structure: z.array(z.string()).min(1),
-  text: z.object({ contains: z.array(z.string()).optional(), equals: z.string().optional() }).optional(),
+  text: z
+    .object({ contains: z.array(z.string()).optional(), equals: z.string().optional() })
+    .optional(),
   html: z.object({ contains: z.array(z.string()).optional() }).optional(),
   attachments: z.array(
     z.object({
@@ -81,7 +83,9 @@ export const FixtureExpectationSchema = z.object({
     }),
   ),
   inlineParts: z
-    .array(z.object({ contentId: z.string(), contentType: z.string(), filename: z.string().optional() }))
+    .array(
+      z.object({ contentId: z.string(), contentType: z.string(), filename: z.string().optional() }),
+    )
     .optional(),
   hasAttachment: z.boolean(),
   headerCountAtLeast: z.number().int().positive().optional(),

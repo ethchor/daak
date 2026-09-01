@@ -1,10 +1,6 @@
 {
   "description": "multipart/signed. The signature part must not be shown to the user as an attachment.",
-  "categories": [
-    "smime",
-    "multipart",
-    "attachment"
-  ],
+  "categories": ["smime", "multipart", "attachment"],
   "headers": {
     "subject": "Signed notice",
     "from": [
@@ -13,20 +9,12 @@
         "address": "records@example.gov"
       }
     ],
-    "messageId": [
-      "smime-01@example.gov"
-    ],
+    "messageId": ["smime-01@example.gov"],
     "date": "2026-08-13T15:45:00.000Z"
   },
-  "structure": [
-    "multipart/signed",
-    "text/plain",
-    "application/pkcs7-signature"
-  ],
+  "structure": ["multipart/signed", "text/plain", "application/pkcs7-signature"],
   "text": {
-    "contains": [
-      "digitally signed"
-    ]
+    "contains": ["digitally signed"]
   },
   "attachments": [],
   "hasAttachment": false,

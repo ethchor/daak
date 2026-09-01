@@ -74,7 +74,8 @@ messages.forEach((message, index) => {
     `${JSON.stringify(
       {
         id,
-        description: "TODO: say what this message tests. Delete the fixture if the answer is nothing.",
+        description:
+          "TODO: say what this message tests. Delete the fixture if the answer is nothing.",
         categories: ["baseline"],
         source: "public-archive",
         sourceUrl: "TODO",

@@ -1,9 +1,6 @@
 {
   "description": "A reply with no In-Reply-To and no References — only a subject prefix. JWZ's subject fallback, and the case where over-eager grouping merges unrelated mail.",
-  "categories": [
-    "threading",
-    "malformed"
-  ],
+  "categories": ["threading", "malformed"],
   "headers": {
     "subject": "RE: Quarterly numbers",
     "from": [
@@ -12,16 +9,12 @@
         "address": "ravi@example.org"
       }
     ],
-    "messageId": [
-      "subject-only@example.org"
-    ],
+    "messageId": ["subject-only@example.org"],
     "inReplyTo": [],
     "references": [],
     "date": "2026-08-03T11:15:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "attachments": [],
   "hasAttachment": false,
   "notes": "Normalised subject is 'Quarterly numbers' — both 'Re:' and 'RE:' strip.",

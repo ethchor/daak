@@ -1,8 +1,6 @@
 {
   "description": "The boring baseline: 7bit us-ascii text/plain. If this ever fails, stop everything.",
-  "categories": [
-    "baseline"
-  ],
+  "categories": ["baseline"],
   "headers": {
     "subject": "Quarterly numbers",
     "from": [
@@ -17,18 +15,12 @@
         "address": "you@example.net"
       }
     ],
-    "messageId": [
-      "20260803091422.1a2b3c@example.org"
-    ],
+    "messageId": ["20260803091422.1a2b3c@example.org"],
     "date": "2026-08-03T09:14:22.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "text": {
-    "contains": [
-      "The quarterly numbers are in."
-    ]
+    "contains": ["The quarterly numbers are in."]
   },
   "attachments": [],
   "hasAttachment": false,

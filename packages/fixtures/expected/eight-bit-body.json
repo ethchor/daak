@@ -1,10 +1,6 @@
 {
   "description": "Raw 8-bit UTF-8 body with no transfer encoding, and an unencoded 8-bit display name in the header.",
-  "categories": [
-    "charset",
-    "8bit",
-    "headers"
-  ],
+  "categories": ["charset", "8bit", "headers"],
   "headers": {
     "subject": "Hilsen",
     "from": [
@@ -13,18 +9,12 @@
         "address": "soren@example.dk"
       }
     ],
-    "messageId": [
-      "8bit-01@example.org"
-    ],
+    "messageId": ["8bit-01@example.org"],
     "date": "2026-08-10T14:22:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "text": {
-    "contains": [
-      "det hele kører fint"
-    ]
+    "contains": ["det hele kører fint"]
   },
   "attachments": [],
   "hasAttachment": false,

@@ -1,9 +1,6 @@
 {
   "description": "LF-only line endings, as produced by scripts and stored by plenty of servers. Round-trip must preserve the bytes exactly — no CRLF normalisation.",
-  "categories": [
-    "edge-case",
-    "byte-preservation"
-  ],
+  "categories": ["edge-case", "byte-preservation"],
   "headers": {
     "subject": "Written by a script",
     "from": [
@@ -12,19 +9,12 @@
         "address": "unixy@example.org"
       }
     ],
-    "messageId": [
-      "bare-lf@example.org"
-    ],
+    "messageId": ["bare-lf@example.org"],
     "date": "2026-08-17T09:00:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "text": {
-    "contains": [
-      "Line one.",
-      "Line two."
-    ]
+    "contains": ["Line one.", "Line two."]
   },
   "attachments": [],
   "hasAttachment": false,

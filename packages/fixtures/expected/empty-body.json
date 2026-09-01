@@ -1,8 +1,6 @@
 {
   "description": "Headers, blank line, nothing else. Preview must be empty rather than undefined-ish.",
-  "categories": [
-    "edge-case"
-  ],
+  "categories": ["edge-case"],
   "headers": {
     "subject": "(no body)",
     "from": [
@@ -11,14 +9,10 @@
         "address": "noreply@example.net"
       }
     ],
-    "messageId": [
-      "empty-01@example.net"
-    ],
+    "messageId": ["empty-01@example.net"],
     "date": "2026-08-16T18:00:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "text": {
     "equals": ""
   },

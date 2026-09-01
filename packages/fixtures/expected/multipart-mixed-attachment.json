@@ -1,10 +1,6 @@
 {
   "description": "Standard base64 attachment with a filename in both Content-Type and Content-Disposition.",
-  "categories": [
-    "multipart",
-    "attachment",
-    "base64"
-  ],
+  "categories": ["multipart", "attachment", "base64"],
   "headers": {
     "subject": "Invoice 4471",
     "from": [
@@ -13,20 +9,12 @@
         "address": "billing@vendor.example"
       }
     ],
-    "messageId": [
-      "invoice-2026-08@example.org"
-    ],
+    "messageId": ["invoice-2026-08@example.org"],
     "date": "2026-08-05T23:40:11.000Z"
   },
-  "structure": [
-    "multipart/mixed",
-    "text/plain",
-    "application/pdf"
-  ],
+  "structure": ["multipart/mixed", "text/plain", "application/pdf"],
   "text": {
-    "contains": [
-      "Net 30."
-    ]
+    "contains": ["Net 30."]
   },
   "attachments": [
     {

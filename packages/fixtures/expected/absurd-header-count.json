@@ -1,10 +1,6 @@
 {
   "description": "400+ headers plus a 60-address folded header. Parsing must stay linear and the folded header must unfold correctly.",
-  "categories": [
-    "headers",
-    "performance",
-    "folding"
-  ],
+  "categories": ["headers", "performance", "folding"],
   "headers": {
     "subject": "Passed through eleven relays",
     "from": [
@@ -13,18 +9,12 @@
         "address": "relay@example.net"
       }
     ],
-    "messageId": [
-      "headers-of-doom@example.net"
-    ],
+    "messageId": ["headers-of-doom@example.net"],
     "date": "2026-08-14T06:00:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "text": {
-    "contains": [
-      "Survived."
-    ]
+    "contains": ["Survived."]
   },
   "attachments": [],
   "hasAttachment": false,

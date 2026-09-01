@@ -1,10 +1,6 @@
 {
   "description": "RFC 5322 group address syntax, including the empty 'undisclosed-recipients:;' group.",
-  "categories": [
-    "headers",
-    "address-parsing",
-    "edge-case"
-  ],
+  "categories": ["headers", "address-parsing", "edge-case"],
   "headers": {
     "subject": "Office closed Friday",
     "from": [
@@ -28,14 +24,10 @@
         "address": "carol@example.org"
       }
     ],
-    "messageId": [
-      "group-01@example.org"
-    ],
+    "messageId": ["group-01@example.org"],
     "date": "2026-08-20T11:11:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "attachments": [],
   "hasAttachment": false,
   "notes": "Group members are flattened into the address list; the empty group yields no recipients at all.",

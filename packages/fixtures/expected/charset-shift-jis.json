@@ -1,29 +1,18 @@
 {
   "description": "Shift_JIS body plus an ISO-2022-JP encoded word. Non-Unicode charsets are not optional in real mail.",
-  "categories": [
-    "charset",
-    "base64",
-    "rfc2047"
-  ],
+  "categories": ["charset", "base64", "rfc2047"],
   "headers": {
     "from": [
       {
         "address": "yamada@example.jp"
       }
     ],
-    "messageId": [
-      "sjis-01@example.jp"
-    ],
+    "messageId": ["sjis-01@example.jp"],
     "date": "2026-08-09T01:00:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "text": {
-    "contains": [
-      "お世話になっております。",
-      "会議は木曜日に変更になりました。"
-    ]
+    "contains": ["お世話になっております。", "会議は木曜日に変更になりました。"]
   },
   "attachments": [],
   "hasAttachment": false,

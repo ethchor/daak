@@ -1,10 +1,6 @@
 {
   "description": "Inline image referenced by cid:. Must NOT count as a user-visible attachment.",
-  "categories": [
-    "multipart",
-    "inline-image",
-    "content-id"
-  ],
+  "categories": ["multipart", "inline-image", "content-id"],
   "headers": {
     "subject": "Issue 88",
     "from": [
@@ -13,20 +9,12 @@
         "address": "hello@weekly.example"
       }
     ],
-    "messageId": [
-      "newsletter-88@example.org"
-    ],
+    "messageId": ["newsletter-88@example.org"],
     "date": "2026-08-06T08:00:00.000Z"
   },
-  "structure": [
-    "multipart/related",
-    "text/html",
-    "image/png"
-  ],
+  "structure": ["multipart/related", "text/html", "image/png"],
   "html": {
-    "contains": [
-      "cid:logo.772@weekly.example"
-    ]
+    "contains": ["cid:logo.772@weekly.example"]
   },
   "attachments": [],
   "inlineParts": [

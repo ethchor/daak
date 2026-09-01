@@ -1,9 +1,6 @@
 {
   "description": "iTIP meeting request as text/calendar inside multipart/alternative.",
-  "categories": [
-    "calendar",
-    "multipart"
-  ],
+  "categories": ["calendar", "multipart"],
   "headers": {
     "subject": "Invitation: Architecture sync",
     "from": [
@@ -12,20 +9,12 @@
         "address": "asha@example.org"
       }
     ],
-    "messageId": [
-      "invite-9912@example.org"
-    ],
+    "messageId": ["invite-9912@example.org"],
     "date": "2026-08-12T09:00:00.000Z"
   },
-  "structure": [
-    "multipart/alternative",
-    "text/plain",
-    "text/calendar"
-  ],
+  "structure": ["multipart/alternative", "text/plain", "text/calendar"],
   "text": {
-    "contains": [
-      "Architecture sync"
-    ]
+    "contains": ["Architecture sync"]
   },
   "attachments": [],
   "hasAttachment": false,

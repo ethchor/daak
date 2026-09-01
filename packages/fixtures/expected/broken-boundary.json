@@ -1,10 +1,6 @@
 {
   "description": "Multipart with no closing boundary delimiter — an Outlook Express classic. The parser must recover, never throw.",
-  "categories": [
-    "malformed",
-    "multipart",
-    "recovery"
-  ],
+  "categories": ["malformed", "multipart", "recovery"],
   "headers": {
     "subject": "Fwd: scanned document",
     "from": [
@@ -13,20 +9,12 @@
         "address": "legacy@example.com"
       }
     ],
-    "messageId": [
-      "broken-01@example.org"
-    ],
+    "messageId": ["broken-01@example.org"],
     "date": "2026-08-11T07:05:00.000Z"
   },
-  "structure": [
-    "multipart/mixed",
-    "text/plain",
-    "text/plain"
-  ],
+  "structure": ["multipart/mixed", "text/plain", "text/plain"],
   "text": {
-    "contains": [
-      "Please see attached."
-    ]
+    "contains": ["Please see attached."]
   },
   "attachments": [
     {

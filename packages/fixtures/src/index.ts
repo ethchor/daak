@@ -1,8 +1,8 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { FixtureExpectationSchema, ManifestSchema } from "./schema.js";
 import type { FixtureCategory, FixtureExpectation } from "./schema.js";
+import { FixtureExpectationSchema, ManifestSchema } from "./schema.js";
 
 export * from "./schema.js";
 
@@ -55,28 +55,27 @@ export const loadManifest = () =>
  */
 export const makeLargeMessage = (attachmentBytes: number): Uint8Array => {
   const boundary = "large_fixture_boundary";
-  const header =
-    [
-      "Message-ID: <generated-large@example.org>",
-      "Date: Mon, 3 Aug 2026 09:14:22 +0000",
-      "From: Bulk <bulk@example.org>",
-      "To: you@example.net",
-      "Subject: Generated large attachment",
-      "MIME-Version: 1.0",
-      `Content-Type: multipart/mixed; boundary="${boundary}"`,
-      "",
-      `--${boundary}`,
-      "Content-Type: text/plain; charset=us-ascii",
-      "",
-      "Large attachment follows.",
-      "",
-      `--${boundary}`,
-      'Content-Type: application/octet-stream; name="large.bin"',
-      'Content-Disposition: attachment; filename="large.bin"',
-      "Content-Transfer-Encoding: base64",
-      "",
-      "",
-    ].join("\r\n");
+  const header = [
+    "Message-ID: <generated-large@example.org>",
+    "Date: Mon, 3 Aug 2026 09:14:22 +0000",
+    "From: Bulk <bulk@example.org>",
+    "To: you@example.net",
+    "Subject: Generated large attachment",
+    "MIME-Version: 1.0",
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    "",
+    `--${boundary}`,
+    "Content-Type: text/plain; charset=us-ascii",
+    "",
+    "Large attachment follows.",
+    "",
+    `--${boundary}`,
+    'Content-Type: application/octet-stream; name="large.bin"',
+    'Content-Disposition: attachment; filename="large.bin"',
+    "Content-Transfer-Encoding: base64",
+    "",
+    "",
+  ].join("\r\n");
   const footer = `\r\n--${boundary}--\r\n`;
 
   // Deterministic filler: one base64 line repeated. Cheap to build, and

@@ -1,8 +1,6 @@
 {
   "description": "A reply carrying In-Reply-To but no References header. Threading must still attach it to its parent.",
-  "categories": [
-    "threading"
-  ],
+  "categories": ["threading"],
   "headers": {
     "subject": "Re: Quarterly numbers",
     "from": [
@@ -11,18 +9,12 @@
         "address": "you@example.net"
       }
     ],
-    "messageId": [
-      "reply-noref@example.net"
-    ],
-    "inReplyTo": [
-      "20260803091422.1a2b3c@example.org"
-    ],
+    "messageId": ["reply-noref@example.net"],
+    "inReplyTo": ["20260803091422.1a2b3c@example.org"],
     "references": [],
     "date": "2026-08-03T10:01:00.000Z"
   },
-  "structure": [
-    "text/plain"
-  ],
+  "structure": ["text/plain"],
   "attachments": [],
   "hasAttachment": false,
   "thread": {
