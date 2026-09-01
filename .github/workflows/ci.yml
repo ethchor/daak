@@ -57,7 +57,7 @@ jobs:
           # It should be a deliberate decision with the owner in the loop, not
           # something that slips through inside a feature PR.
           base="origin/${{ github.base_ref }}"
-          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          git fetch --no-tags origin "${{ github.base_ref }}"
           changed=$(git diff --name-only "$base"...HEAD -- packages/contracts/src || true)
           if [ -n "$changed" ]; then
             {
