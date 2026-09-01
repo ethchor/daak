@@ -1,7 +1,7 @@
 import { z } from "zod";
-import type { AccountId, BlobId } from "../ids.js";
+import type { AccountId } from "../ids.js";
 import type { Intent, IntentOutcome } from "../model/intent.js";
-import type { Mailbox } from "../model/mailbox.js";
+import type { MailboxRole } from "../model/mailbox.js";
 import type { SyncCollection } from "../model/sync.js";
 import type { Cancellable, EmailAddress, Unsubscribe } from "../primitives.js";
 
@@ -39,13 +39,36 @@ export const ProviderCapabilitiesSchema = z.object({
 export type ProviderCapabilities = z.infer<typeof ProviderCapabilitiesSchema>;
 
 /**
+ * A mailbox as the provider reports it.
+ *
+ * Local ids are assigned by the sync engine, not by an adapter — an adapter
+ * that invents `MailboxId`s is deciding local identity from remote state, and
+ * the mapping stops being stable across a resynchronise.
+ */
+export interface ProviderMailbox {
+  readonly providerId: string;
+  readonly name: string;
+  readonly parentProviderId: string | null;
+  readonly role: MailboxRole;
+  readonly sortOrder: number;
+  /** Provider-reported counts. Advisory only. */
+  readonly reportedTotal?: number;
+  readonly reportedUnread?: number;
+}
+
+/**
  * Metadata as the provider reports it, before it becomes a local `Message`.
  * Keep it minimal: anything derivable from the raw bytes is derived locally,
  * not trusted from the server.
  */
 export interface ProviderMessage {
   readonly providerId: string;
-  readonly blobId: BlobId | null;
+  /**
+   * The provider's own opaque handle for the bytes, when it has one. NOT a
+   * local `BlobId` — that is the digest of the raw message and cannot be known
+   * until the bytes are fetched.
+   */
+  readonly providerBlobId: string | null;
   readonly size: number;
   readonly receivedAt: string;
   readonly keywords: readonly string[];
@@ -66,7 +89,8 @@ export interface ChangeBatch {
 }
 
 export interface SubmitRequest extends Cancellable {
-  readonly blobId: BlobId;
+  /** From a prior `uploadBlob`. Opaque, provider-side. */
+  readonly providerBlobId: string;
   readonly mailFrom: EmailAddress;
   readonly rcptTo: readonly EmailAddress[];
   /** Client-generated; the provider must treat it as an idempotency key. */
@@ -84,7 +108,7 @@ export interface MailProvider {
 
   capabilities(): Promise<ProviderCapabilities>;
 
-  listMailboxes(options?: Cancellable): Promise<readonly Mailbox[]>;
+  listMailboxes(options?: Cancellable): Promise<readonly ProviderMailbox[]>;
 
   /**
    * Changes since `cursor`. A `null` cursor means "start from now" for the tail
