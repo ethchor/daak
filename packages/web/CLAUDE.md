@@ -17,12 +17,20 @@ keyboard, search locally, and work offline with the network off.
 - The message list is virtualised from the first commit. It will hold 500k rows.
 - Interaction latency budget is enforced in CI. Sub-50ms is a build failure when
   missed, not an aspiration.
-- Theme via CSS custom properties from `brand/tokens.css`. No hard-coded colours
-  anywhere in a component.
+- Theme via `brand/tokens.css`, which Tailwind's theme reads from. No hard-coded
+  colours anywhere in a component — a raw hex value in a diff is a review
+  comment.
+- **Re-theme shadcn components as they are copied in.** The default shadcn look
+  is the most recognisable aesthetic on the web and works directly against
+  BRAND §17. A component that lands still wearing the default theme is not done.
 
 ## Allowed imports
 
-`@daak/ui-core`, `@daak/contracts`, `react`, `react-dom`, a virtualiser.
+`@daak/ui-core`, `@daak/contracts`, `react`, `react-dom`, `@radix-ui/*`,
+`tailwindcss`, `cmdk`, a virtualiser (TanStack Virtual).
+
+shadcn components are **copied source** under `src/components/ui/`, not a
+dependency. Own them, delete what is unused, and re-theme every one.
 
 ## Forbidden
 

@@ -27,7 +27,8 @@ expected to be revisited.
 | Dev server | Stalwart via Docker Compose |
 | MIME | Wrap a maintained library; validate against the corpus |
 | UI | React 19 + Vite, headless view models in `ui-core` |
-| Styling | CSS custom properties from `brand/tokens.css` |
+| UI components | Radix primitives via shadcn/ui, re-themed |
+| Styling | Tailwind v4, themed from `brand/tokens.css` |
 | Drafts | Yjs CRDT (week 4) |
 | AI | Provider interface; Anthropic + Ollama adapters, both optional |
 | Agents | MCP server over the command registry |
@@ -226,17 +227,57 @@ rich text composition) and because contributors already know it.
 
 ---
 
-## D-11 — Design tokens as CSS custom properties
+## D-11 — Radix primitives via shadcn/ui, re-themed to Daak tokens
 
-**Chosen:** `brand/tokens.css` defines the palette, type scale and spacing.
-Components reference tokens only; no hard-coded colours.
+**Chosen:** Radix primitives for behaviour, shadcn/ui as the starting component
+vocabulary (copied source, not a dependency), Tailwind v4 for styling, and
+`brand/tokens.css` as the single source of truth that Tailwind's theme reads
+from.
 
-**Why:** it keeps the brand's "mostly monochrome, one memorable accent"
-discipline enforceable in review — a new hex code in a component is visible in a
-diff — and it gives plugins and user themes a supported surface without an API.
+**Why:** Radix gives focus trapping, roving tabindex, portals and ARIA — real
+work that is easy to get subtly wrong and expensive to retrofit. shadcn copies
+source into the repo rather than adding a dependency, so there is no version
+lock and unused components are deleted rather than carried. Its `Command`
+component (built on `cmdk`) is a substantial head start on the palette, which is
+central to this product.
 
-**Over:** Tailwind (fast, and puts the palette in the markup where drift is
-harder to spot); CSS-in-JS (runtime cost against a 50ms budget).
+The strongest argument is the build model: many agents writing UI in parallel
+produce far more consistent work against a known component vocabulary than they
+do inventing a dialog per pull request.
+
+**Over:** Radix alone with a hand-written styled layer (more control over the
+look, more work per component, less leverage for parallel agents); Base UI (same
+model, newer, far fewer worked examples for an agent to follow); hand-rolling
+everything (writing our own focus traps is the classic source of subtle
+accessibility bugs).
+
+**This reverses the earlier decision** to use plain CSS custom properties over
+Tailwind. Tailwind v4 is CSS-first and variable-based, so `brand/tokens.css`
+remains the source of truth and plugin/user theming still has a supported
+surface — which was the whole reason for the original choice.
+
+### Two conditions this decision is contingent on
+
+**1. Re-theme before the first component lands.** The shadcn default look is the
+most recognisable aesthetic on the web right now, and BRAND §17 asks for quiet,
+minimal and distinctive. Used as shipped it works directly against the brand.
+Replacing the theme with Daak tokens is a first-commit task in the `web` lane,
+not a later cleanup.
+
+**2. Settle keyboard ownership before the first Radix component lands.** Radix
+components own their own key handling and trap focus; Daak dispatches a global
+keymap into the command registry. Who owns `Escape` while a popover is open over
+the message list needs an explicit rule in `ui-core`, decided up front rather
+than discovered in week 3. This is the one real integration risk in the choice.
+
+**Revisit if:** Tailwind's class surface starts eroding the brand discipline
+that D-11 originally existed to protect — the tell is hard-coded colour values
+appearing in components instead of token references.
+
+**Note:** the hardest parts of this UI get nothing from either library. The
+virtualised 500k-row list, the thread view and the composer are TanStack Virtual
+plus custom code either way. shadcn covers the surrounding ~20% — dialogs,
+menus, palette, toasts, settings forms.
 
 ---
 

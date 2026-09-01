@@ -27,6 +27,17 @@ bug.
   `useSyncExternalStore`; nothing here knows React exists.
 - Virtualised list state is computed here, not in the component.
 
+## Keyboard ownership — decide this before `web` starts
+
+Radix components own their own key handling and trap focus. Daak dispatches a
+global keymap into the command registry. Those two will fight over `Escape`,
+arrow keys and `Enter` the moment a popover opens over the message list.
+
+`ui-core` owns the rule, because it owns the keymap. Define explicitly which
+layer claims a keystroke when an overlay is open, and expose it as state the
+shell can consult — do not leave it to whichever handler happens to run first.
+This is the one real integration risk in the UI stack decision (D-11).
+
 ## Allowed imports
 
 `@daak/contracts`, `@daak/store`, `@daak/search`, `zod`.
