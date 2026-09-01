@@ -74,7 +74,18 @@ importers:
 
   packages/sync: {}
 
-  packages/threading: {}
+  packages/threading:
+    dependencies:
+      '@daak/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+    devDependencies:
+      '@daak/fixtures':
+        specifier: workspace:*
+        version: link:../fixtures
+      '@daak/mime':
+        specifier: workspace:*
+        version: link:../mime
 
   packages/ui-core: {}
 
