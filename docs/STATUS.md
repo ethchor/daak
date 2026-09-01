@@ -19,8 +19,14 @@ _Last updated: 2026-09-01._
 ### What is genuinely finished
 
 The interfaces, the persisted shapes, the error taxonomy and the capability
-model, with 42 tests covering them. The corpus loader and its integrity checks.
-The stack decisions, each with a revisit trigger.
+model. The corpus loader and its integrity checks. The stack decisions, each
+with a revisit trigger. 86 tests across the repo.
+
+Implementing `adapter-mock` against `MailProvider` found three places where the
+interface asked an adapter for something only the core can know — local mailbox
+ids, a local content-addressed `BlobId`, and local ids inside `Intent`. All
+three are fixed. That is the argument for building the mock before the real
+adapter, and it is why `contracts` locks *after* lane D rather than before it.
 
 ### What is only started
 
@@ -40,11 +46,19 @@ Nothing measures them yet, because nothing exists to measure.
 | A | `mime` | Not started. Scoped in its `CLAUDE.md` |
 | B | `threading` | Not started. Scoped |
 | C | `store` | Not started. Scoped |
-| D | `adapter-mock` | Not started. Scoped — **start here**, weeks 2–4 depend on it |
+| D | `adapter-mock` | ✅ Done. Deterministic server, 8 fault kinds, 44 tests |
+
+### Next
+
+`store` and `threading` are both unblocked and independent — either can start
+now. `mime` needs its library evaluation against the corpus first (see
+`docs/TECH_STACK.md` D-09).
 
 ## Weeks 2–4
 
-Not started. See the plan.
+Not started. `sync` is the deep-review lane and depends on `store` plus
+`adapter-mock`; the mock's `apply-then-fail` fault is what its convergence
+property tests will be written against.
 
 ## Open decisions
 
@@ -55,8 +69,9 @@ Not started. See the plan.
 
 ## Known gaps worth naming
 
-- No adapter has ever spoken to a real server. `apps/dev-stalwart`'s compose
-  file is written but unvalidated.
+- No adapter has ever spoken to a real server. `adapter-mock` implements the
+  contract faithfully, which is not the same as a real server implementing it
+  faithfully. `apps/dev-stalwart`'s compose file is written but unvalidated.
 - The eight seams have one implementation each at most. The plan calls for two
   by day 30, which is what proves an abstraction rather than assuming it.
 - Nothing has been profiled. Every performance claim in this repo is currently a
