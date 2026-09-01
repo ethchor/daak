@@ -1,6 +1,6 @@
 import { z } from "zod";
-import type { AccountId } from "../ids.js";
-import type { Intent, IntentOutcome } from "../model/intent.js";
+import type { AccountId, IntentId } from "../ids.js";
+import type { IntentOutcome } from "../model/intent.js";
 import type { MailboxRole } from "../model/mailbox.js";
 import type { SyncCollection } from "../model/sync.js";
 import type { Cancellable, EmailAddress, Unsubscribe } from "../primitives.js";
@@ -88,6 +88,53 @@ export interface ChangeBatch {
   readonly hasMore: boolean;
 }
 
+/**
+ * A mutation, expressed in the provider's own ids.
+ *
+ * Local `Intent`s carry local ids; the sync engine translates them into these
+ * before pushing. Doing the translation above the boundary is what keeps the
+ * adapter free of local identity concerns and the engine free of provider ones
+ * — and it means an adapter can never be tempted to invent a local id.
+ */
+export type ProviderMutation =
+  | {
+      readonly kind: "keywords.change";
+      readonly providerIds: readonly string[];
+      readonly add: readonly string[];
+      readonly remove: readonly string[];
+    }
+  | {
+      readonly kind: "mailboxes.change";
+      readonly providerIds: readonly string[];
+      readonly add: readonly string[];
+      readonly remove: readonly string[];
+    }
+  | { readonly kind: "message.destroy"; readonly providerIds: readonly string[] }
+  | {
+      readonly kind: "draft.save";
+      readonly providerBlobId: string;
+      readonly mailboxProviderId: string;
+      readonly replacesProviderId?: string;
+    }
+  | {
+      readonly kind: "mailbox.create";
+      readonly name: string;
+      readonly parentProviderId: string | null;
+    }
+  | { readonly kind: "mailbox.rename"; readonly providerId: string; readonly name: string }
+  | { readonly kind: "mailbox.destroy"; readonly providerId: string };
+
+export interface ProviderIntent {
+  /**
+   * The originating local intent's id, used verbatim as the idempotency key.
+   * Re-applying an intent the provider has already seen must be a no-op that
+   * returns the original outcome — that is what makes a retry after an
+   * ambiguous failure safe.
+   */
+  readonly intentId: IntentId;
+  readonly mutation: ProviderMutation;
+}
+
 export interface SubmitRequest extends Cancellable {
   /** From a prior `uploadBlob`. Opaque, provider-side. */
   readonly providerBlobId: string;
@@ -141,7 +188,10 @@ export interface MailProvider {
    * Push local intents. Outcomes come back in the same order as the input, one
    * per intent. Partial success is normal and expected.
    */
-  apply(intents: readonly Intent[], options?: Cancellable): Promise<readonly IntentOutcome[]>;
+  apply(
+    intents: readonly ProviderIntent[],
+    options?: Cancellable,
+  ): Promise<readonly IntentOutcome[]>;
 
   submit(request: SubmitRequest): Promise<SubmitOutcome>;
 

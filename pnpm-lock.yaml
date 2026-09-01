@@ -26,7 +26,15 @@ importers:
 
   packages/adapter-jmap: {}
 
-  packages/adapter-mock: {}
+  packages/adapter-mock:
+    dependencies:
+      '@daak/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+    devDependencies:
+      '@daak/fixtures':
+        specifier: workspace:*
+        version: link:../fixtures
 
   packages/contracts:
     dependencies:

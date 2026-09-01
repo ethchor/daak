@@ -109,5 +109,11 @@ export const IntentOutcomeSchema = z.object({
   error: SerializedDaakErrorSchema.optional(),
   /** Provider state string after the change, when the provider gives one. */
   cursor: z.string().optional(),
+  /**
+   * Set when the mutation created something server-side (a saved draft, a new
+   * mailbox). The engine maps it to a local id; without it, a created object is
+   * only discoverable on the next sync, which makes the UI lie in between.
+   */
+  createdProviderId: z.string().optional(),
 });
 export type IntentOutcome = z.infer<typeof IntentOutcomeSchema>;
