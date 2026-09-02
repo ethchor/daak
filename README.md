@@ -41,7 +41,7 @@ packages/
 ├── adapter-mock/   deterministic fake server + fault injection       ✅
 ├── sync/           cursors, intent log, reconciliation               ✅
 ├── adapter-jmap/   JMAP provider (RFC 8620/8621)                     ✅
-├── search/         FTS5 index and query grammar                      week 2
+├── search/         FTS5 index and query grammar                      ✅
 ├── ui-core/        view models, command registry, keymap             week 3
 ├── web/            React shell                                       week 3
 ├── intelligence/   LLM providers, annotators, BYOK                   week 4
