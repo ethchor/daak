@@ -24,8 +24,8 @@ intelligence.
 - **Extend** — plugins, rules, MCP, agent interfaces.
 
 > **Status: week 2 in progress.** Parsing, threading, storage, a chaos-capable
-> mock provider and the sync engine all work, with 255 tests. Next is the JMAP
-> adapter and local search; there is no working client yet. See [`docs/STATUS.md`](docs/STATUS.md) for exactly where things
+> mock provider, the sync engine and the JMAP adapter all work, with 303 tests.
+> Local search is next; there is no working client yet. See [`docs/STATUS.md`](docs/STATUS.md) for exactly where things
 > stand and [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md) for where they are going.
 
 ## Repository
@@ -39,7 +39,7 @@ packages/
 ├── store/          SQLite schema, migrations, queries                ✅
 ├── adapter-mock/   deterministic fake server + fault injection       ✅
 ├── sync/           cursors, intent log, reconciliation               ✅
-├── adapter-jmap/   JMAP provider (RFC 8620/8621)                     week 2
+├── adapter-jmap/   JMAP provider (RFC 8620/8621)                     ✅
 ├── search/         FTS5 index and query grammar                      week 2
 ├── ui-core/        view models, command registry, keymap             week 3
 ├── web/            React shell                                       week 3

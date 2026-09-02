@@ -58,7 +58,7 @@ a budget, not a measurement.
 | Lane | Package | State |
 |---|---|---|
 | A | `@daak/sync` | ✅ Tail, backfill, intent log, reconciliation. 8 tests, 200 property runs |
-| B | `@daak/adapter-jmap` | ⬜ Not started. Independent of sync |
+| B | `@daak/adapter-jmap` | ✅ Full MailProvider over RFC 8620/8621. 48 tests |
 | C | `@daak/search` | ⬜ Not started. Independent of sync |
 | D | `apps/dev-stalwart` seeding | ⬜ Not started |
 
@@ -79,7 +79,7 @@ found:
 - **A refresh after a delete deadlocked**, asking a provider for bytes it no
   longer had, until `settle` hit its round limit.
 
-**255 tests across the repo.**
+**303 tests across the repo.**
 
 ## Open decisions
 
@@ -90,9 +90,17 @@ found:
 
 ## Known gaps worth naming
 
-- No adapter has ever spoken to a real server. `adapter-mock` implements the
-  contract faithfully, which is not the same as a real server implementing it
-  faithfully. `apps/dev-stalwart`'s compose file is written but unvalidated.
+- **No adapter has ever spoken to a real server.** `adapter-jmap` is tested
+  against an in-memory JMAP server that can produce failures a real one never
+  will on demand — an expired state string, a partial `SetError`, a transport
+  that dies mid-write. That is worth a great deal and is not conformance.
+  `apps/dev-stalwart`'s compose file is written but unvalidated, and closing
+  this is lane D.
+- JMAP submission is not properly idempotent, because JMAP offers no primitive
+  for it. The adapter remembers keys for the life of the process only, so an
+  ambiguous send returns `unknown` and never `rejected`. Closing it properly
+  means searching Sent for the `Message-ID` before re-sending — a compose-lane
+  problem.
 - Threads are recomputed for a whole account on every projection batch. Correct,
   and O(messages) — fine at 1k, not at 500k. Incremental threading is a week-3
   problem, flagged here so it is a known cost rather than a surprise.
