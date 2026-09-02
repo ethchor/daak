@@ -10,6 +10,7 @@ Requires Node ≥ 22.12 and pnpm 10.
     pnpm install
     pnpm check          # lint + typecheck + test — the inner loop
     pnpm preflight      # everything CI runs — the gate before you push
+    pnpm soak           # property suites, many seeds — after touching sync/store/threading
 
 There is no build step for the libraries: internal packages resolve to their
 TypeScript source. Only the web app builds, via Vite.

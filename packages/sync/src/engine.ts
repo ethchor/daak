@@ -41,29 +41,162 @@ export const createSyncEngine = (options: SyncEngineOptions): SyncEngine => {
   let intentCounter = 0;
 
   /**
-   * Messages whose local state we are not yet willing to trust.
+   * What the server must show us before we believe a read about a message we
+   * changed ourselves.
    *
-   * A message we mutated ourselves cannot be verified by waiting for the change
-   * feed to mention it: the feed may report it while a read is still stale, and
-   * the cursor then advances past the change for good. The convergence property
-   * found exactly that — a move that landed server-side and was invisible
-   * locally for ever after.
+   * Three attempts at this, and the first two were wrong in instructive ways.
    *
-   * So we read our own writes, and we do not believe a single read. A message
-   * leaves this map only when two consecutive reads agree; a stale read
-   * disagrees with the fresh one that follows and simply costs another round.
-   * Against a server that never lies this is one extra fetch; against one that
-   * does, it is the difference between converging and not.
+   * 1. Trust the change feed. It reports the message while a read is still
+   *    stale; we store the stale state and advance the cursor past the change,
+   *    which is then invisible for ever.
+   * 2. Believe a read once a second read agrees. A server that serves three
+   *    stale reads in a row produces two stale reads that agree with each
+   *    other. Repetition is not evidence.
+   * 3. This one. We know what we asked for, so a read that contradicts an
+   *    applied change is discarded as stale — on *every* path, not just during
+   *    verification. That last part is what the second attempt missed: the
+   *    verification refresh read fresh data and cleared itself, and then the
+   *    tail's own fetch came back stale and overwrote it.
+   *
+   * A guard therefore filters writes rather than merely prompting re-reads, and
+   * it outlives the first conforming read. `budget` ends the argument: after
+   * enough contradicting reads we accept the server, because a stale read and
+   * another client genuinely undoing the change are indistinguishable from
+   * here, and the server is the authority.
+   *
+   * Only `applied` needs a guard:
+   *   - `rejected` means the server never changed, so even a stale read
+   *     returns the correct state.
+   *   - `unknown` leaves the intent outstanding, so it is re-sent under the
+   *     same id and resolves to applied or rejected.
    */
-  const unverified = new Map<string, { fingerprint: string | null; agreed: number }>();
-  const AGREEING_READS = 2;
+  interface Expectation {
+    keywordsPresent: Set<string>;
+    keywordsAbsent: Set<string>;
+    mailboxesPresent: Set<string>;
+    mailboxesAbsent: Set<string>;
+  }
 
-  const suspect = (providerIds: readonly string[]): void => {
+  interface Guard {
+    expect: Expectation;
+    /** A conforming read has been seen; stop forcing refreshes. */
+    satisfied: boolean;
+    /** Reads left before we stop arguing and take the server's word. */
+    budget: number;
+  }
+
+  const READ_BUDGET = 8;
+  const guards = new Map<string, Guard>();
+  /** Messages to re-read once, with nothing specific expected of them. */
+  const needsRead = new Set<string>();
+
+  const emptyExpectation = (): Expectation => ({
+    keywordsPresent: new Set(),
+    keywordsAbsent: new Set(),
+    mailboxesPresent: new Set(),
+    mailboxesAbsent: new Set(),
+  });
+
+  /** What the server must show once this intent has been applied. */
+  const expectationOf = (intent: Intent): Expectation | null => {
+    const op = intent.op;
+    if (op.op === "keywords.change") {
+      const expect = emptyExpectation();
+      for (const keyword of op.add) expect.keywordsPresent.add(keyword);
+      for (const keyword of op.remove) expect.keywordsAbsent.add(keyword);
+      return expect;
+    }
+    if (op.op === "mailboxes.change") {
+      const expect = emptyExpectation();
+      for (const mailbox of op.add) expect.mailboxesPresent.add(providerIdOf(mailbox));
+      for (const mailbox of op.remove) expect.mailboxesAbsent.add(providerIdOf(mailbox));
+      return expect;
+    }
+    // A destroy is confirmed by the message being gone, which `refresh` detects
+    // without needing an expectation.
+    return null;
+  };
+
+  const expect = (providerIds: readonly string[], expectation: Expectation | null): void => {
     for (const providerId of providerIds) {
       if (providerId === "") continue;
-      if (!unverified.has(providerId)) unverified.set(providerId, { fingerprint: null, agreed: 0 });
+      if (expectation === null) {
+        needsRead.add(providerId);
+        continue;
+      }
+      const existing = guards.get(providerId);
+      if (existing === undefined) {
+        guards.set(providerId, { expect: expectation, satisfied: false, budget: READ_BUDGET });
+        continue;
+      }
+      // A later mutation overrides an earlier one on the same value: adding a
+      // keyword after removing it means present, not both.
+      const merged = existing.expect;
+      for (const value of expectation.keywordsPresent) {
+        merged.keywordsAbsent.delete(value);
+        merged.keywordsPresent.add(value);
+      }
+      for (const value of expectation.keywordsAbsent) {
+        merged.keywordsPresent.delete(value);
+        merged.keywordsAbsent.add(value);
+      }
+      for (const value of expectation.mailboxesPresent) {
+        merged.mailboxesAbsent.delete(value);
+        merged.mailboxesPresent.add(value);
+      }
+      for (const value of expectation.mailboxesAbsent) {
+        merged.mailboxesPresent.delete(value);
+        merged.mailboxesAbsent.add(value);
+      }
+      // The expectation changed, so a previously conforming read proves nothing.
+      guards.set(providerId, { expect: merged, satisfied: false, budget: READ_BUDGET });
     }
   };
+
+  const satisfies = (meta: ProviderMessage, expectation: Expectation): boolean => {
+    const keywords = new Set(meta.keywords);
+    const mailboxes = new Set(meta.mailboxProviderIds);
+    for (const value of expectation.keywordsPresent) if (!keywords.has(value)) return false;
+    for (const value of expectation.keywordsAbsent) if (keywords.has(value)) return false;
+    for (const value of expectation.mailboxesPresent) if (!mailboxes.has(value)) return false;
+    for (const value of expectation.mailboxesAbsent) if (mailboxes.has(value)) return false;
+    return true;
+  };
+
+  /**
+   * Decide whether to believe a read, and age its guard.
+   *
+   * Returns false when the read contradicts a live expectation — the caller
+   * must then discard it rather than writing it, because writing it is exactly
+   * how a change becomes invisible.
+   */
+  const believable = (meta: ProviderMessage): boolean => {
+    needsRead.delete(meta.providerId);
+    const guard = guards.get(meta.providerId);
+    if (guard === undefined) return true;
+
+    const ok = satisfies(meta, guard.expect);
+    const budget = guard.budget - 1;
+    if (ok) {
+      if (budget <= 0) guards.delete(meta.providerId);
+      else guards.set(meta.providerId, { ...guard, satisfied: true, budget });
+      return true;
+    }
+    if (budget <= 0) {
+      // Out of patience. Another client may simply have undone this.
+      guards.delete(meta.providerId);
+      return true;
+    }
+    guards.set(meta.providerId, { ...guard, budget });
+    return false;
+  };
+
+  const unsettled = (): string[] => [
+    ...new Set([
+      ...needsRead,
+      ...[...guards.entries()].filter(([, guard]) => !guard.satisfied).map(([id]) => id),
+    ]),
+  ];
 
   /**
    * Single writer per account.
@@ -132,6 +265,11 @@ export const createSyncEngine = (options: SyncEngineOptions): SyncEngine => {
           receivedAt: meta.receivedAt as Instant,
         });
       }
+
+      // A read that contradicts a change the provider told us it applied is
+      // stale. Writing it is how the change disappears; the message stays
+      // unsatisfied and we read it again.
+      if (!believable(meta)) continue;
 
       payloads.push({ type: "message.keywords.set", messageId: id, keywords: [...meta.keywords] });
       payloads.push({
@@ -447,24 +585,11 @@ export const createSyncEngine = (options: SyncEngineOptions): SyncEngine => {
     const seen = new Set(live.map((meta) => meta.providerId));
     const payloads = await ingest(live, options);
 
-    for (const meta of live) {
-      const fingerprint = JSON.stringify([
-        [...meta.keywords].sort(),
-        [...meta.mailboxProviderIds].sort(),
-      ]);
-      const state = unverified.get(meta.providerId);
-      if (state === undefined) continue;
-      // Two consecutive reads that agree. A stale read disagrees with the fresh
-      // one after it and costs a round rather than a permanent divergence.
-      const agreed = state.fingerprint === fingerprint ? state.agreed + 1 : 1;
-      if (agreed >= AGREEING_READS) unverified.delete(meta.providerId);
-      else unverified.set(meta.providerId, { fingerprint, agreed });
-    }
-
     // Anything the server no longer knows about is gone, whatever we thought.
     for (const providerId of unique) {
       if (seen.has(providerId)) continue;
-      unverified.delete(providerId);
+      guards.delete(providerId);
+      needsRead.delete(providerId);
       const id = localMessageId(accountId, providerId) as MessageId;
       if (store.getMessage(id) !== null) {
         payloads.push({ type: "message.removed", messageId: id });
@@ -535,7 +660,7 @@ export const createSyncEngine = (options: SyncEngineOptions): SyncEngine => {
           // be a no-op if it already landed.
           for (const intent of pushable) {
             store.intents.update(intent.id, { state: "unknown", lastError: daak.toJSON() });
-            suspect(touchedProviderIds(intent));
+            expect(touchedProviderIds(intent), null);
           }
           phase = "error";
           if (toRefresh.length > 0) await refresh(toRefresh, options);
@@ -552,14 +677,15 @@ export const createSyncEngine = (options: SyncEngineOptions): SyncEngine => {
           // The provider returned no verdict for this one. Not applied, not
           // rejected — unknown, same as a lost response.
           store.intents.update(intent.id, { state: "unknown" });
-          suspect(touchedProviderIds(intent));
+          expect(touchedProviderIds(intent), null);
           unknown += 1;
           continue;
         }
         if (outcome.status === "applied") {
           store.intents.update(intent.id, { state: "settled", lastError: null });
-          // Applied is the provider's word, not an observation. Verify it.
-          suspect(touchedProviderIds(intent));
+          // Applied is the provider's word, not an observation. Verify it, and
+          // know what we are looking for.
+          expect(touchedProviderIds(intent), expectationOf(intent));
           settled += 1;
         } else if (outcome.status === "rejected") {
           store.intents.update(intent.id, {
@@ -570,13 +696,14 @@ export const createSyncEngine = (options: SyncEngineOptions): SyncEngine => {
           rejected += 1;
         } else {
           store.intents.update(intent.id, { state: "unknown" });
-          suspect(touchedProviderIds(intent));
+          expect(touchedProviderIds(intent), null);
           unknown += 1;
         }
       }
 
-      suspect(toRefresh);
-      if (unverified.size > 0) await refresh([...unverified.keys()], options);
+      expect(toRefresh, null);
+      const outstandingReads = unsettled();
+      if (outstandingReads.length > 0) await refresh(outstandingReads, options);
 
       phase = "idle";
       return { settled, rejected, unknown, deferred };
@@ -617,9 +744,10 @@ export const createSyncEngine = (options: SyncEngineOptions): SyncEngine => {
         lastErrorCode = toDaakError(error).code;
       }
 
-      if (unverified.size > 0) {
+      const outstandingReads = unsettled();
+      if (outstandingReads.length > 0) {
         try {
-          await exclusive(() => refresh([...unverified.keys()], options));
+          await exclusive(() => refresh(outstandingReads, options));
         } catch (error) {
           lastErrorCode = toDaakError(error).code;
         }
@@ -638,7 +766,7 @@ export const createSyncEngine = (options: SyncEngineOptions): SyncEngine => {
       const quiet =
         fingerprint() === before &&
         outstanding === 0 &&
-        unverified.size === 0 &&
+        unsettled().length === 0 &&
         pushed.unknown === 0 &&
         pushed.deferred === 0 &&
         tail !== undefined &&

@@ -64,7 +64,15 @@ class of failure that nothing else local will:
   refuses that combination by name.
 
 `pnpm check` (lint, typecheck, test) is the faster inner loop while you work.
-`pnpm preflight` is the gate before the push. If you touched one package:
+`pnpm preflight` is the gate before the push. If you touched a package with
+property tests — `sync`, `store`, `threading` — also run:
+
+    pnpm soak
+
+Preflight runs the tests once, because that is what CI does, and once is not
+enough for a property suite: each run explores a different slice of the input
+space. The sync engine passed 200 property cases locally and failed on its first
+CI run, on a real counterexample. If you touched one package:
 
     pnpm --filter @daak/<package> test
 

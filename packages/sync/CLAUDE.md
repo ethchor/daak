@@ -28,28 +28,51 @@ class of bug this package exists to avoid.
 - **Every mutation is idempotent and carries a client-generated id**, so a retry
   after an ambiguous failure is safe.
 
-## Two bugs the properties caught, and what they mean
+## What the properties caught, and the two wrong fixes before the right one
 
-Both were found by the convergence property on its first runs, and neither would
-have appeared in any example test.
+None of this would have appeared in an example test, and the wrong turns are
+worth keeping because each looked correct.
 
-**A stale read silently loses a change for ever.** The tail fetched metadata
-while the server was still serving pre-mutation state, wrote that stale state
-locally, and advanced the cursor past the change. The change was then invisible:
-its sequence number was behind the cursor, so the change feed would never mention
-it again.
+**A stale read loses a change for ever.** The tail fetched metadata while the
+server was still serving pre-mutation state, wrote that stale state, and
+advanced the cursor past the change. The change was then invisible: its sequence
+number sat behind the cursor, so the change feed would never mention it again. A
+user's archive silently un-archives itself and nothing ever puts it right.
 
-The fix is that the engine no longer trusts the change feed to tell it about its
-*own* writes. Every message an intent touched becomes unverified, and it leaves
-that set only when two consecutive reads agree — a stale read disagrees with the
-fresh one after it and costs a round rather than a permanent divergence. Against
-an honest server that is one extra fetch per mutated message; against a lying one
-it is the difference between converging and not.
+*First fix, wrong:* believe a read once a second read agrees with it. The
+property demolished it — a server that serves three stale reads in a row gives
+you two stale reads that agree **with each other**. Repetition is not evidence.
+
+*Second fix, still wrong:* check reads against what we asked for, but only while
+verifying. The verification refresh read fresh data and cleared itself; then the
+tail's own fetch came back stale and overwrote it. Verifying a value you then
+allow something else to overwrite is not verification.
+
+*What works:* an expectation **filters every write**. When the provider says an
+intent applied, any later read that contradicts it is discarded as stale, on all
+paths, and the message stays unsatisfied so it is read again. A read budget ends
+the argument — after enough contradicting reads we accept the server, because a
+stale read and another client genuinely undoing the change are indistinguishable
+from here.
 
 **A refresh after a delete deadlocked.** Reconciling a destroyed message fetched
 its metadata, found no local copy, and asked for its bytes — which the provider
-no longer has. A tombstone reported by a metadata read is not new mail. Both
-`ingest` and `refresh` now treat a null `providerBlobId` as exactly that.
+no longer has, so `settle` spun to its round limit. A tombstone in a metadata
+read is not new mail. Both `ingest` and `refresh` treat a null `providerBlobId`
+as exactly that.
+
+## Soak this package before pushing
+
+    pnpm soak
+
+`pnpm preflight` runs the tests once, because that is what CI does — and once is
+not enough for a property suite. Each run explores a different slice of the
+input space. The second wrong fix above passed 200 property cases locally and
+failed on its first CI run, on a real counterexample. Ten soak runs is about two
+thousand cases and takes under a minute.
+
+Pin every counterexample you fix into the property's `examples`, so it is
+checked on every run rather than when a seed happens to rediscover it.
 
 ## The specific failure mode to grep for
 

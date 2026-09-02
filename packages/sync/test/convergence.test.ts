@@ -125,9 +125,22 @@ describe("convergence", () => {
           }
         },
       ),
-      { numRuns: 200 },
+      {
+        numRuns: 200,
+        // Counterexamples that once failed, kept so they are checked on every
+        // run rather than only when a seed happens to rediscover them. This one
+        // came from CI, not from a local run: a random-seeded property finds
+        // different things in different places, which is a feature.
+        examples: [
+          [
+            [{ kind: "mailboxes", target: 1, add: ["TRASH"], remove: [] }],
+            [{ op: "fetchMetadata", kind: "stale-read", times: 3 }],
+            1,
+          ],
+        ] as never,
+      },
     );
-  }, 120_000);
+  }, 180_000);
 
   it("never applies an ambiguous mutation twice", async () => {
     await fc.assert(
