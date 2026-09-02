@@ -27,6 +27,30 @@ importers:
         specifier: ^2.8.1
         version: 2.9.0
 
+  apps/dev-stalwart:
+    dependencies:
+      '@daak/adapter-jmap':
+        specifier: workspace:*
+        version: link:../../packages/adapter-jmap
+      '@daak/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@daak/fixtures':
+        specifier: workspace:*
+        version: link:../../packages/fixtures
+      '@daak/mime':
+        specifier: workspace:*
+        version: link:../../packages/mime
+      '@daak/search':
+        specifier: workspace:*
+        version: link:../../packages/search
+      '@daak/store':
+        specifier: workspace:*
+        version: link:../../packages/store
+      '@daak/threading':
+        specifier: workspace:*
+        version: link:../../packages/threading
+
   packages/adapter-jmap:
     dependencies:
       '@daak/contracts':

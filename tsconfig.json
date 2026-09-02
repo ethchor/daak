@@ -18,12 +18,15 @@
       "@daak/intelligence": ["packages/intelligence/src/index.ts"],
       "@daak/ui-core": ["packages/ui-core/src/index.ts"],
       "@daak/plugin-host": ["packages/plugin-host/src/index.ts"],
-      "@daak/web": ["packages/web/src/index.ts"]
+      "@daak/web": ["packages/web/src/index.ts"],
+      "@daak/dev-stalwart": ["apps/dev-stalwart/src/index.ts"]
     }
   },
   "include": [
     "packages/*/src/**/*",
     "packages/*/test/**/*",
+    "apps/*/src/**/*",
+    "apps/*/test/**/*",
     "packages/*/*.config.ts",
     "*.config.ts"
   ],

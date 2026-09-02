@@ -1,0 +1,26 @@
+{
+  "name": "@daak/dev-stalwart",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A local JMAP server to develop against, a deterministic mailbox seeder, and the performance harness.",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. apps/dev-stalwart",
+    "seed": "node --experimental-strip-types --disable-warning=ExperimentalWarning bin/daak.mjs seed",
+    "bench": "node --experimental-strip-types --disable-warning=ExperimentalWarning bin/daak.mjs bench",
+    "conformance": "vitest run --root ../.. apps/dev-stalwart/test/conformance.test.ts"
+  },
+  "dependencies": {
+    "@daak/adapter-jmap": "workspace:*",
+    "@daak/contracts": "workspace:*",
+    "@daak/fixtures": "workspace:*",
+    "@daak/mime": "workspace:*",
+    "@daak/search": "workspace:*",
+    "@daak/store": "workspace:*",
+    "@daak/threading": "workspace:*"
+  }
+}

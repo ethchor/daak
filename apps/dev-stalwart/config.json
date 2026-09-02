@@ -1,0 +1,4 @@
+{
+  "@type": "Sqlite",
+  "path": "/opt/stalwart/data/index.sqlite3"
+}

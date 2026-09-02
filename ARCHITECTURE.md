@@ -157,7 +157,10 @@ cannot be called by a rule at 3am, which defeats the point of the abstraction.
 
 ## Performance budgets
 
-Enforced in CI against a seeded 500k-message mailbox. A miss fails the build.
+Measured by `apps/dev-stalwart` against a seeded mailbox. **Not yet enforced in
+CI**: the numbers come from whatever machine ran them, and a gate needs a runner
+whose variance is known. Where each stands today, and the one that is missed by
+a wide margin, is in `docs/STATUS.md`.
 
 | Interaction | Budget |
 |---|---|
