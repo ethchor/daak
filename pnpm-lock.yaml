@@ -75,7 +75,24 @@ importers:
 
   packages/plugin-host: {}
 
-  packages/search: {}
+  packages/search:
+    dependencies:
+      '@daak/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@daak/store':
+        specifier: workspace:*
+        version: link:../store
+    devDependencies:
+      '@daak/fixtures':
+        specifier: workspace:*
+        version: link:../fixtures
+      '@daak/mime':
+        specifier: workspace:*
+        version: link:../mime
+      '@daak/threading':
+        specifier: workspace:*
+        version: link:../threading
 
   packages/store:
     dependencies:

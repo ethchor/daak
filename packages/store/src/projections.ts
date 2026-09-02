@@ -172,6 +172,10 @@ export const createProjector = (driver: SqliteDriver, projectors: Projectors): P
     prepareLazily(driver, "delete from threads where account_id = ?"),
     prepareLazily(driver, "delete from messages where account_id = ?"),
     prepareLazily(driver, "delete from mailboxes where account_id = ?"),
+    // The full-text index is a projection too. Leaving stale rows behind after
+    // a rebuild would mean searching a mailbox that no longer exists;
+    // repopulating it is @daak/search's job.
+    prepareLazily(driver, "delete from message_fts where account_id = ?"),
   ];
 
   const recomputeThreads = (accountId: AccountId): void => {

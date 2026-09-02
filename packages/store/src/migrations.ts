@@ -213,6 +213,35 @@ export const MIGRATIONS: readonly Migration[] = [
       drop table if exists blobs;
     `,
   },
+  {
+    version: 2,
+    name: "search-index",
+    up: `
+      -- The full-text index. A projection like any other: droppable, and
+      -- rebuildable from the blobs.
+      --
+      -- The schema lives here because the store owns every table — migrations
+      -- stay in one ordered, reversible place — while @daak/search owns what
+      -- goes into it and how it is queried. A store rebuild empties this table;
+      -- repopulating it is the search package's job, not a migration's.
+      --
+      -- account_id is carried so a rebuild can be scoped to one account.
+      -- Both ids are UNINDEXED: they are for filtering and joining, and
+      -- tokenising an opaque id only pollutes the term dictionary.
+      create virtual table message_fts using fts5 (
+        message_id UNINDEXED,
+        account_id UNINDEXED,
+        subject,
+        sender,
+        recipients,
+        body,
+        tokenize = 'unicode61 remove_diacritics 2'
+      );
+    `,
+    down: `
+      drop table if exists message_fts;
+    `,
+  },
 ];
 
 export const LATEST_VERSION = MIGRATIONS.reduce(

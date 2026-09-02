@@ -1,9 +1,14 @@
 /**
- * @daak/search — not yet implemented.
+ * @daak/search — the local index and the query grammar.
  *
- * Planned exports: parseQuery(input) -> QueryNode, createIndex(store), search(query).
- *
- * See ./CLAUDE.md for scope, allowed imports, and done-criteria before
- * starting this lane.
+ * No AI anywhere in this package. Natural-language search is a separate layer
+ * in `@daak/intelligence` that compiles down to this package's `Query`; search
+ * itself never calls a model, and works with none configured.
  */
-export {};
+
+export type { SearchDocument, SearchIndex } from "./index-writer.js";
+export { createSearchIndex } from "./index-writer.js";
+export type { Clause, ClauseKind, Query } from "./query.js";
+export { filterClauses, parseQuery, parseQueryDate, textClauses } from "./query.js";
+export type { Searcher, SearchHit, SearchOptions } from "./search.js";
+export { createSearcher } from "./search.js";
