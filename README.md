@@ -24,8 +24,9 @@ intelligence.
 - **Extend** — plugins, rules, MCP, agent interfaces.
 
 > **Status: week 2 in progress.** Parsing, threading, storage, a chaos-capable
-> mock provider, the sync engine and the JMAP adapter all work, with 303 tests.
-> Local search is next; there is no working client yet. See [`docs/STATUS.md`](docs/STATUS.md) for exactly where things
+> mock provider, the sync engine, the JMAP adapter and local search all work,
+> with 351 tests. Next is a real server to run them against; there is no
+> working client yet. See [`docs/STATUS.md`](docs/STATUS.md) for exactly where things
 > stand and [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md) for where they are going.
 
 ## Repository

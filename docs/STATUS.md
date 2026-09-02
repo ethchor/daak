@@ -59,12 +59,17 @@ a budget, not a measurement.
 |---|---|---|
 | A | `@daak/sync` | ✅ Tail, backfill, intent log, reconciliation. 8 tests, 200 property runs |
 | B | `@daak/adapter-jmap` | ✅ Full MailProvider over RFC 8620/8621. 48 tests |
-| C | `@daak/search` | ⬜ Not started. Independent of sync |
-| D | `apps/dev-stalwart` seeding | ⬜ Not started |
+| C | `@daak/search` | ✅ FTS5 index, query grammar, recency ranking. 48 tests |
+| D | `apps/dev-stalwart` seeding | ⬜ Not started. **The next thing that matters** |
 
 `sync` was built tests-first, as the plan requires for this lane: the public
 surface and the convergence properties were committed before a line of the
 engine existed.
+
+Lane D is now the one that matters most. Two packages carry a caveat that only
+it can lift: no adapter has spoken to a real server, and no query has run
+against a large mailbox — so every performance number in `ARCHITECTURE.md` is
+still a budget rather than a measurement.
 
 ### What the convergence property caught
 
@@ -79,7 +84,7 @@ found:
 - **A refresh after a delete deadlocked**, asking a provider for bytes it no
   longer had, until `settle` hit its round limit.
 
-**303 tests across the repo.**
+**351 tests across the repo.**
 
 ## Open decisions
 
