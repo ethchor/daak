@@ -10,5 +10,8 @@
   },
   "scripts": {
     "test": "vitest run --root ../.. packages/adapter-jmap"
+  },
+  "dependencies": {
+    "@daak/contracts": "workspace:*"
   }
 }
